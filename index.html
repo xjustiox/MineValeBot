@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamCity Dashboard</title>
+    <title>StreamCity Ultimate Dashboard</title>
     <style>
         :root {
             --bg-base: #0b0c10;
@@ -11,7 +11,6 @@
             --bg-element: #1c1f26;
             --bg-input: #0f1115;
             --color-brand: #5865F2;
-            --color-brand-hover: #4752c4;
             --text-primary: #f5f6f8;
             --text-secondary: #989aa2;
             --color-success: #23a55a;
@@ -20,42 +19,26 @@
             --border-smooth: rgba(255, 255, 255, 0.04);
         }
 
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background: var(--bg-base); color: var(--text-primary); margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        body { background: var(--bg-base); color: var(--text-primary); margin: 0; display: flex; height: 100vh; overflow: hidden; }
 
-        /* MODERNE SIDEBAR */
         .sidebar { width: 260px; background: var(--bg-surface); padding: 30px 20px; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--border-smooth); }
-        .sidebar-header { display: flex; align-items: center; gap: 10px; margin-bottom: 35px; padding-left: 5px; }
-        .sidebar-header h2 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.5px; }
+        .sidebar-header { display: flex; align-items: center; gap: 10px; margin-bottom: 35px; }
+        .sidebar-header h2 { margin: 0; font-size: 1.25rem; font-weight: 700; }
         .nav-list { display: flex; flex-direction: column; gap: 6px; }
-        .nav-item { background: transparent; color: var(--text-secondary); border: none; padding: 12px 14px; text-align: left; width: 100%; font-size: 0.9rem; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.15s ease; display: flex; align-items: center; gap: 10px; }
-        .nav-item:hover { background: rgba(255,255,255,0.02); color: var(--text-primary); }
-        .nav-item.active { background: rgba(88, 101, 242, 0.1); color: var(--color-brand); font-weight: 600; }
+        .nav-item { background: transparent; color: var(--text-secondary); border: none; padding: 12px 14px; text-align: left; width: 100%; font-size: 0.9rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.15s; }
+        .nav-item:hover, .nav-item.active { background: rgba(88, 101, 242, 0.1); color: var(--color-brand); font-weight: 600; }
 
-        /* CONTENT BEREICH */
-        .content-area { flex: 1; padding: 50px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(88, 101, 242, 0.03), transparent 40%); }
+        .content-area { flex: 1; padding: 50px; overflow-y: auto; }
         .tab-panel { display: none; }
-        .tab-panel.active { display: block; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-panel.active { display: block; animation: slideUp 0.2s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        h1 { margin-top: 0; font-size: 1.75rem; font-weight: 700; margin-bottom: 30px; letter-spacing: -0.5px; }
-        
-        /* CARDS WITH NO BORDER GLOW */
+        h1 { margin-top: 0; font-size: 1.75rem; font-weight: 700; margin-bottom: 30px; }
         .panel-card { background: var(--bg-surface); padding: 30px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border-smooth); }
-        .panel-card h3 { margin-top: 0; font-size: 1.1rem; font-weight: 600; margin-bottom: 25px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+        .panel-card h3 { margin-top: 0; font-size: 1.1rem; margin-bottom: 25px; display: flex; align-items: center; gap: 8px; }
         
-        /* DATA GRID */
-        .grid-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
-        .grid-item { background: var(--bg-surface); padding: 20px; border-radius: 12px; border: 1px solid var(--border-smooth); }
-        .grid-item h4 { margin: 0; color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .grid-item p { margin: 10px 0 0 0; font-size: 1.75rem; font-weight: 700; color: var(--text-primary); }
-
-        /* MODULE SWITCH TOGGLES */
         .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-smooth); }
-        .toggle-row:last-child { border-bottom: none; }
-        .toggle-details h5 { margin: 0; font-size: 0.95rem; font-weight: 600; }
-        .toggle-details p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-secondary); }
-        
         .switch-container { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch-container input { opacity: 0; width: 0; height: 0; }
         .switch-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #2e333d; transition: .2s; border-radius: 24px; }
@@ -63,30 +46,16 @@
         input:checked + .switch-slider { background-color: var(--color-brand); }
         input:checked + .switch-slider:before { transform: translateX(20px); }
 
-        /* COMPONENT CONTROLS */
         .input-box { margin-bottom: 20px; display: flex; flex-direction: column; }
         .input-box label { margin-bottom: 8px; color: var(--text-secondary); font-weight: 500; font-size: 0.85rem; }
-        input, select, textarea { background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-smooth); padding: 12px 14px; border-radius: 8px; font-size: 0.9rem; transition: all 0.15s ease; }
+        input, select, textarea { background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border-smooth); padding: 12px 14px; border-radius: 8px; font-size: 0.9rem; }
         input:focus, select:focus, textarea:focus { border-color: var(--color-brand); outline: none; }
-        textarea { resize: vertical; min-height: 90px; }
+        textarea { resize: vertical; min-height: 80px; }
 
-        /* BUTTONS */
-        .action-btn { background: var(--color-brand); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600; transition: background 0.15s; }
-        .action-btn:hover { background: var(--color-brand-hover); }
-        .action-btn-danger { background: rgba(242, 63, 67, 0.1); color: var(--color-danger); }
-        .action-btn-danger:hover { background: var(--color-danger); color: white; }
-        
-        /* SELFROLES ROW GRID */
-        .role-builder-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; background: var(--bg-input); padding: 10px; border-radius: 8px; }
-        .role-builder-row input { flex: 1; }
-        .role-builder-row select { flex: 2; }
-        .delete-row-btn { background: transparent; color: var(--text-secondary); border: none; cursor: pointer; padding: 10px; font-size: 1rem; }
-        .delete-row-btn:hover { color: var(--color-danger); }
-        .dash-add-btn { background: transparent; border: 1px dashed var(--border-smooth); color: var(--text-secondary); padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 500; font-size: 0.85rem; }
-        .dash-add-btn:hover { border-color: var(--color-brand); color: var(--color-brand); }
+        .action-btn { background: var(--color-brand); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600; }
+        .action-btn-danger { background: rgba(242, 63, 67, 0.1); color: var(--color-danger); border: none; padding: 12px; border-radius: 8px; cursor: pointer; }
 
-        /* STATUS ALERTS */
-        #status-toast { position: fixed; bottom: 30px; right: 30px; padding: 14px 24px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; z-index: 1000; display: none; box-shadow: 0 8px 30px rgba(0,0,0,0.3); border: 1px solid var(--border-smooth); }
+        #status-toast { position: fixed; bottom: 30px; right: 30px; padding: 14px 24px; border-radius: 8px; font-size: 0.9rem; display: none; background: var(--bg-surface); border: 1px solid var(--border-smooth); z-index: 1000; }
     </style>
 </head>
 <body>
@@ -95,258 +64,158 @@
 
 <div class="sidebar">
     <div>
-        <div class="sidebar-header">
-            <div style="width: 8px; height: 8px; background: var(--color-brand); border-radius: 50%;"></div>
-            <h2>StreamCity</h2>
-        </div>
+        <div class="sidebar-header"><h2>StreamCity v2</h2></div>
         <div class="nav-list">
             <button class="nav-item active" onclick="changePanel('overview', this)">📊 Systemstatus</button>
             <button class="nav-item" onclick="changePanel('modules', this)">🧩 Module</button>
-            <button class="nav-item" onclick="changePanel('welcomer', this)">👋 Welcomer Text</button>
-            <button class="nav-item" onclick="changePanel('roles', this)">🎭 Klick-Rollen</button>
-            <button class="nav-item" onclick="changePanel('automod', this)">🛡️ Auto-Moderation</button>
+            <button class="nav-item" onclick="changePanel('welcomer', this)">🖼️ Welcomer Embed-Designer</button>
+            <button class="nav-item" onclick="changePanel('logging', this)">📜 Log-Kanäle</button>
+            <button class="nav-item" onclick="changePanel('automod', this)">🛡️ AutoMod</button>
         </div>
     </div>
-    <div>
-        <button class="nav-item action-btn-danger" style="justify-content: center; font-weight:600;" onclick="triggerCoreRestart()">🔄 Bot Neustarten</button>
-    </div>
+    <button class="action-btn-danger" onclick="triggerCoreRestart()">🔄 Bot Reboots</button>
 </div>
 
 <div class="content-area">
     
     <div id="overview" class="tab-panel active">
         <h1>Dashboard-Zentrale</h1>
-        <div class="grid-layout">
-            <div class="grid-item"><h4>Bot Status</h4><p id="bot-status" style="color: var(--color-success);">Verbinde...</p></div>
-            <div class="grid-item"><h4>Server-User</h4><p id="bot-members">--</p></div>
-            <div class="grid-item"><h4>Bot Ping</h4><p id="bot-ping">0 ms</p></div>
-        </div>
-        <div class="panel-card">
-            <h3>Live-Konfiguration</h3>
-            <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0; line-height: 1.6;">Willkommen im Admin-Panel deines Discord-Bots. Hier konfigurierst du alle Systeme wie Welcome-Feeds, Anti-Spam Filter und Rollenzuweisungen live und ohne Neustart.</p>
-        </div>
+        <div class="panel-card"><h3>Live-Status: <span id="bot-status" style="color:var(--color-success)">Online</span></h3><p id="bot-ping">0 ms Latenz</p></div>
     </div>
 
     <div id="modules" class="tab-panel">
-        <h1>Module aktivieren</h1>
+        <h1>Module steuern</h1>
         <div class="panel-card">
-            <h3>Core Funktionspakete</h3>
-            <div class="toggle-row">
-                <div class="toggle-details"><h5>Willkommens-System</h5><p>Begrüßung & Verabschiedung im Textkanal ausgeben.</p></div>
-                <label class="switch-container"><input type="checkbox" id="mod-welcomer"><span class="switch-slider"></span></label>
-            </div>
-            <div class="toggle-row">
-                <div class="toggle-details"><h5>AutoMod-Filter</h5><p>Automatisches Löschen von beleidigenden Wörtern und Links.</p></div>
-                <label class="switch-container"><input type="checkbox" id="mod-automod"><span class="switch-slider"></span></label>
-            </div>
-            <div class="toggle-row">
-                <div class="toggle-details"><h5>Level- & XP-System</h5><p>Vergibt XP für aktive Chatschreiber mit Level-Ups.</p></div>
-                <label class="switch-container"><input type="checkbox" id="mod-levels"><span class="switch-slider"></span></label>
-            </div>
-            <div class="toggle-row">
-                <div class="toggle-details"><h5>Unterhaltungs-Befehle (Fun)</h5><p>Aktiviert Utility Commands wie /wurf, /ping und /rank für User.</p></div>
-                <label class="switch-container"><input type="checkbox" id="mod-fun"><span class="switch-slider"></span></label>
-            </div>
-            <button class="action-btn" style="margin-top: 25px;" onclick="pushSettings()">Module speichern</button>
+            <div class="toggle-row"><div><h5>Willkommens-Embeds</h5></div><label class="switch-container"><input type="checkbox" id="mod-welcomer"><span class="switch-slider"></span></label></div>
+            <div class="toggle-row"><div><h5>AutoMod-System</h5></div><label class="switch-container"><input type="checkbox" id="mod-automod"><span class="switch-slider"></span></label></div>
+            <button class="action-btn" style="margin-top:20px;" onclick="pushSettings()">Module Speichern</button>
         </div>
     </div>
 
     <div id="welcomer" class="tab-panel">
-        <h1>Welcomer & Text-Setups</h1>
+        <h1>🖼️ Welcomer Embed Designer</h1>
         <div class="panel-card">
-            <h3>Texte & Routing</h3>
-            <div class="input-box">
-                <label for="welcomeChannel">Zielkanal-ID für Mitteilungen</label>
-                <input type="text" id="welcomeChannel" placeholder="z.B. 1526383165453893752">
-            </div>
-            <div class="input-box">
-                <label for="welcomeMessage">Willkommens-Nachricht (Embed)</label>
-                <textarea id="welcomeMessage"></textarea>
-            </div>
-            <div class="input-box">
-                <label for="leaveMessage">Abschieds-Nachricht (Embed)</label>
-                <textarea id="leaveMessage"></textarea>
-            </div>
-            <div class="input-box" style="margin-top: 25px;">
-                <label for="levelUpMessage">Level-Up Benachrichtigung</label>
-                <input type="text" id="levelUpMessage">
-            </div>
-            <button class="action-btn" onclick="pushSettings()">Änderungen übernehmen</button>
+            <div class="input-box"><label>Zielkanal für Willkommens-Embeds</label><select id="welcomeChannelSelect"></select></div>
+            <div class="input-box"><label>Embed Titel</label><input type="text" id="embedTitle"></div>
+            <div class="input-box"><label>Embed Beschreibung ({user} und {server} nutzen)</label><textarea id="embedDesc"></textarea></div>
+            <div class="input-box"><label>Embed Farbe (Hex-Code)</label><input type="color" id="embedColor" style="height:45px; padding:2px;"></div>
+            <div class="input-box"><label>Großes Bild (Bild-URL)</label><input type="text" id="embedImage" placeholder="https://example.com/bild.png"></div>
+            <button class="action-btn" onclick="pushSettings()">Embed Live Schalten 🔥</button>
         </div>
     </div>
 
-    <div id="roles" class="tab-panel">
-        <h1>Klick-Rollen Menü</h1>
+    <div id="logging" class="tab-panel">
+        <h1>📜 Getrenntes Log-Kanal Setup</h1>
         <div class="panel-card">
-            <h3>Button-Zuweisung</h3>
-            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px;">Erstelle Button-Listen. Führe im Discord danach den Slash-Befehl <code>/setup-selfroles</code> aus.</p>
-            <div id="roles-list-wrapper"></div>
-            <button type="button" class="dash-add-btn" onclick="injectRoleRow()">+ Neue Button-Rolle anlegen</button>
-            <button class="action-btn" style="margin-top: 25px;" onclick="pushSettings()">Rollen speichern</button>
+            <h3>Kanal-Routing</h3>
+            <div class="input-box"><label>Moderations-Logs (z.B. für /kick Befehle)</label><select id="modLogSelect"></select></div>
+            <div class="input-box"><label>AutoMod-Logs (Zensierte Wörter & Links)</label><select id="autoModLogSelect"></select></div>
+            <button class="action-btn" onclick="pushSettings()">Log-Kanäle speichern</button>
         </div>
     </div>
 
     <div id="automod" class="tab-panel">
-        <h1>Schutz- & Moderationsfilter</h1>
+        <h1>🛡️ AutoMod Einstellungen</h1>
         <div class="panel-card">
-            <h3>Filter-Regeln</h3>
-            <div class="toggle-row" style="padding-top: 0;">
-                <div class="toggle-details"><h5>Fremde Discord-Server-Einladungen zensieren</h5><p>Löscht Einladungslinks in Textkanälen.</p></div>
-                <label class="switch-container"><input type="checkbox" id="am-blockLinks"><span class="switch-slider"></span></label>
-            </div>
-            <div class="toggle-row">
-                <div class="toggle-details"><h5>Aggressiver Anti-Spam-Schutz</h5><p>Löscht Nachrichten bei mehr als 4 Absendungen in 3 Sekunden.</p></div>
-                <label class="switch-container"><input type="checkbox" id="am-antiSpam"><span class="switch-slider"></span></label>
-            </div>
-            <div class="input-box" style="margin-top: 25px;">
-                <label for="am-blockedWords">Gesperrte Begriffe (Kommagetrennt auflisten)</label>
-                <textarea id="am-blockedWords" placeholder="Begriff1, Begriff2, Begriff3..."></textarea>
-            </div>
-            <div class="input-box">
-                <label for="logChannel">Sicherheits- & Logkanal ID</label>
-                <input type="text" id="logChannel" placeholder="Logkanal ID für Verstöße...">
-            </div>
-            <button class="action-btn" onclick="pushSettings()">Filter aktivieren</button>
+            <div class="toggle-row"><div><h5>Links filtern</h5></div><label class="switch-container"><input type="checkbox" id="am-blockLinks"><span class="switch-slider"></span></label></div>
+            <div class="input-box" style="margin-top:20px;"><label>Gesperrte Wörter (kommagetrennt)</label><textarea id="am-blockedWords"></textarea></div>
+            <button class="action-btn" onclick="pushSettings()">AutoMod aktualisieren</button>
         </div>
     </div>
 
 </div>
 
 <script>
-    const API_URL = "https://streamcitytool-7cz3.onrender.com"; 
-    let guildRoles = [];
+    const API_URL = "https://streamcitytool-7cz3.onrender.com";
 
-    function changePanel(panelId, btn) {
+    function changePanel(id, btn) {
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        document.getElementById(panelId).classList.add('active');
+        document.getElementById(id).classList.add('active');
         btn.classList.add('active');
     }
 
-    async function syncDashboardData() {
-        showToast("Synchronisiere Daten...", "var(--color-warning)");
+    async function syncData() {
+        showToast("Synchronisiere...", "var(--color-warning)");
         try {
-            const response = await fetch(`${API_URL}/api/stats`);
-            const data = await response.json();
+            const res = await fetch(`${API_URL}/api/stats`);
+            const data = await res.json();
             
-            document.getElementById("bot-status").innerText = data.status;
-            document.getElementById("bot-ping").innerText = `${data.ping} ms`;
-            document.getElementById("bot-members").innerText = data.memberCount || "Aktiv";
+            document.getElementById("bot-ping").innerText = `${data.ping} ms API Latenz`;
             
-            document.getElementById("welcomeChannel").value = data.config.welcomeChannelId || "";
-            document.getElementById("welcomeMessage").value = data.config.welcomeMessage || "";
-            document.getElementById("leaveMessage").value = data.config.leaveMessage || "";
-            document.getElementById("levelUpMessage").value = data.config.levels?.levelUpMessage || "";
-            document.getElementById("logChannel").value = data.config.logChannelId || "";
-            
-            // Toggles
-            document.getElementById("mod-welcomer").checked = data.config.modules?.welcomer ?? true;
-            document.getElementById("mod-automod").checked = data.config.modules?.automod ?? false;
-            document.getElementById("mod-levels").checked = data.config.modules?.levels ?? true;
-            document.getElementById("mod-fun").checked = data.config.modules?.fun ?? true;
+            // Kanallisten befüllen
+            buildChannelDropdown("welcomeChannelSelect", data.availableChannels, data.config.welcomeChannelId);
+            buildChannelDropdown("modLogSelect", data.availableChannels, data.config.channels?.modLogId);
+            buildChannelDropdown("autoModLogSelect", data.availableChannels, data.config.channels?.autoModLogId);
 
-            document.getElementById("am-blockLinks").checked = data.config.automod?.blockLinks ?? true;
-            document.getElementById("am-antiSpam").checked = data.config.automod?.antiSpam ?? true;
+            // Embed-Daten setzen
+            document.getElementById("embedTitle").value = data.config.welcomeEmbed?.title || "";
+            document.getElementById("embedDesc").value = data.config.welcomeEmbed?.description || "";
+            document.getElementById("embedColor").value = data.config.welcomeEmbed?.color || "#5865F2";
+            document.getElementById("embedImage").value = data.config.welcomeEmbed?.image || "";
+
+            // Toggles & Rest
+            document.getElementById("mod-welcomer").checked = data.config.modules?.welcomer;
+            document.getElementById("mod-automod").checked = data.config.modules?.automod;
+            document.getElementById("am-blockLinks").checked = data.config.automod?.blockLinks;
             document.getElementById("am-blockedWords").value = data.config.automod?.blockedWords || "";
-            
-            guildRoles = data.availableRoles;
-            document.getElementById("roles-list-wrapper").innerHTML = "";
-            data.config.selfRoles.forEach(r => injectRoleRow(r.id, r.label, r.emoji));
 
-            showToast("Verbindung hergestellt!", "var(--color-success)", 3000);
-        } catch (e) {
-            showToast("Fehler: Verbindung zum Core fehlgeschlagen.", "var(--color-danger)");
-        }
+            showToast("Verbunden!", "var(--color-success)", 2000);
+        } catch (e) { showToast("Verbindungsfehler", "var(--color-danger)"); }
     }
 
-    function injectRoleRow(selectedRoleId = "", label = "", emoji = "") {
-        const container = document.getElementById("roles-list-wrapper");
-        const rowId = 'r_' + Math.random().toString(36).substr(2, 5);
-
-        let options = `<option value="">-- Rolle wählen --</option>`;
-        guildRoles.forEach(r => {
-            options += `<option value="${r.id}" ${r.id === selectedRoleId ? "selected" : ""}>${r.name}</option>`;
+    function buildChannelDropdown(elementId, channels, selectedId) {
+        const select = document.getElementById(elementId);
+        select.innerHTML = `<option value="">-- Kein Kanal ausgewählt --</option>`;
+        channels.forEach(c => {
+            select.innerHTML += `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}># ${c.name}</option>`;
         });
-
-        const html = `
-            <div class="role-builder-row" id="${rowId}">
-                <input type="text" placeholder="✨" value="${emoji}" class="role-emoji" style="max-width: 50px; text-align:center;">
-                <input type="text" placeholder="Button Text" value="${label}" class="role-label">
-                <select class="role-id">${options}</select>
-                <button class="delete-row-btn" onclick="document.getElementById('${rowId}').remove()">✕</button>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', html);
     }
 
     async function pushSettings() {
-        showToast("Übertrage Änderungen...", "var(--color-warning)");
-
+        showToast("Speichere...", "var(--color-warning)");
         const payload = {
-            welcomeChannelId: document.getElementById("welcomeChannel").value || null,
-            welcomeMessage: document.getElementById("welcomeMessage").value,
-            leaveMessage: document.getElementById("leaveMessage").value,
-            logChannelId: document.getElementById("logChannel").value || null,
+            welcomeChannelId: document.getElementById("welcomeChannelSelect").value || null,
+            welcomeEmbed: {
+                title: document.getElementById("embedTitle").value,
+                description: document.getElementById("embedDesc").value,
+                color: document.getElementById("embedColor").value,
+                thumbnail: "{user_avatar}",
+                image: document.getElementById("embedImage").value
+            },
+            channels: {
+                modLogId: document.getElementById("modLogSelect").value || null,
+                autoModLogId: document.getElementById("autoModLogSelect").value || null
+            },
             modules: {
                 welcomer: document.getElementById("mod-welcomer").checked,
                 automod: document.getElementById("mod-automod").checked,
-                levels: document.getElementById("mod-levels").checked,
-                fun: document.getElementById("mod-fun").checked
+                levels: true, fun: true
             },
             automod: {
                 blockLinks: document.getElementById("am-blockLinks").checked,
-                antiSpam: document.getElementById("am-antiSpam").checked,
+                antiSpam: true,
                 blockedWords: document.getElementById("am-blockedWords").value
-            },
-            levels: {
-                levelUpMessage: document.getElementById("levelUpMessage").value
-            },
-            selfRoles: []
+            }
         };
 
-        document.querySelectorAll(".role-builder-row").forEach(row => {
-            const id = row.querySelector(".role-id").value;
-            const label = row.querySelector(".role-label").value;
-            const emoji = row.querySelector(".role-emoji").value;
-            if (id && label) payload.selfRoles.push({ id, label, emoji: emoji || "✨" });
-        });
-
-        try {
-            const res = await fetch(`${API_URL}/api/settings`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            const data = await res.json();
-            if (data.success) showToast("System erfolgreich aktualisiert! ✨", "var(--color-brand)", 3000);
-        } catch (e) {
-            showToast("Fehler beim Senden der Daten.", "var(--color-danger)");
-        }
-    }
-
-    async function triggerCoreRestart() {
-        if(!confirm("Möchtest du den Bot-Core remote killen und neu starten?")) return;
-        showToast("Sende Signal...", "var(--color-danger)");
         try {
             await fetch(`${API_URL}/api/settings`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "restart" })
+                body: JSON.stringify(payload)
             });
-        } catch (e) {}
-        showToast("Bot startet neu. Dashboard reconnected gleich...", "var(--color-warning)", 4000);
+            showToast("Gespeichert! ✨", "var(--color-brand)", 2000);
+        } catch (e) { showToast("Fehler", "var(--color-danger)"); }
     }
 
-    function showToast(text, color, delay = 0) {
+    function showToast(t, c, d = 0) {
         const toast = document.getElementById("status-toast");
-        toast.innerText = text;
-        toast.style.background = "var(--bg-surface)";
-        toast.style.borderLeft = `4px solid ${color}`;
-        toast.style.display = "block";
-        if (delay > 0) setTimeout(() => { toast.style.display = "none"; }, delay);
+        toast.innerText = t; toast.style.borderLeft = `4px solid ${c}`; toast.style.display = "block";
+        if (d > 0) setTimeout(() => toast.style.display = "none", d);
     }
 
-    window.onload = syncDashboardData;
+    window.onload = syncData;
 </script>
 </body>
 </html>
