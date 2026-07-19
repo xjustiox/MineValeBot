@@ -39,7 +39,6 @@
             letter-spacing: -0.01em;
         }
         
-        /* FULL SCREEN SIDEBAR INTERFACE */
         .sidebar { 
             width: 300px; 
             background: rgba(8, 10, 15, 0.7); 
@@ -97,7 +96,6 @@
             box-shadow: inset 1px 1px 0px rgba(255,255,255,0.05);
         }
 
-        /* PANEL AREA */
         .viewport { 
             flex: 1; 
             padding: 60px; 
@@ -146,7 +144,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* FORM FIELD SYSTEM */
         .field { 
             margin-bottom: 24px; 
         }
@@ -177,8 +174,13 @@
             border-color: rgba(255, 255, 255, 0.2); 
             background: rgba(0, 0, 0, 0.5);
         }
+
+        /* CUSTOM FILE INPUT */
+        input[type="file"] {
+            padding: 12px;
+            cursor: pointer;
+        }
         
-        /* BUTTONS & TOGGLES */
         .btn { 
             background: #fff; 
             color: #030407; 
@@ -287,7 +289,6 @@
             transform: translateX(22px); 
         }
 
-        /* LIVE EMBED PREVIEW STYLING */
         .preview-box { 
             width: 100%; 
             max-width: 450px; 
@@ -373,6 +374,19 @@
             <p style="font-size:1.3rem; margin:0; color:var(--neon-blue); font-weight:800; letter-spacing: 0.05em;" id="core-status">UPLINK AUFBAUEN...</p>
             <p style="color:var(--text-dim); margin-top:12px; font-weight: 500;" id="core-ping">Latenz: 0ms // User im Cache: --</p>
         </div>
+        
+        <div class="card">
+            <h2>🛸 Bot Assets verändern</h2>
+            <div class="field">
+                <label>Neues Profilbild hochladen (.png / .jpg)</label>
+                <input type="file" id="bot-avatar-file" accept="image/*" onchange="uploadAsset('avatar')">
+            </div>
+            <div class="field">
+                <label>Neuen User-Banner hochladen (.png / .jpg)</label>
+                <input type="file" id="bot-banner-file" accept="image/*" onchange="uploadAsset('banner')">
+            </div>
+        </div>
+
         <div class="card">
             <h2>🛸 Central Command Unit</h2>
             <p style="color: var(--text-dim); line-height: 1.7; margin: 0; font-size: 1rem;">
@@ -504,7 +518,6 @@
         }
     }
 
-    // Holt Backend-Daten im Hintergrund ab und updatet NUR den Status & Ping live
     async function updateLivePing() {
         try {
             const res = await fetch(`${API}/api/stats`);
@@ -531,14 +544,12 @@
             document.getElementById("core-status").innerText = "CONNECTED // GALAXY MATRIX ONLINE";
             document.getElementById("core-ping").innerText = `Latenz: ${data.ping}ms // User im Cache: ${data.memberCount}`;
 
-            // Dropdowns dynamisch generieren
             buildDropdown("welcomeChannelId", data.availableChannels, data.config.welcomeChannelId);
             buildDropdown("leaveChannelId", data.availableChannels, data.config.leaveChannelId);
             buildDropdown("log-mod", data.availableChannels, data.config.channels?.modLogId);
             buildDropdown("log-am", data.availableChannels, data.config.channels?.autoModLogId);
             buildDropdown("voiceCategorySelect", data.availableCategories, data.config.channels?.tempVoiceCategoryId);
 
-            // Module Toggles setzen
             document.getElementById("m-welcomer").checked = data.config.modules.welcomer;
             document.getElementById("m-leaver").checked = data.config.modules.leaver;
             document.getElementById("m-automod").checked = data.config.modules.automod;
@@ -546,7 +557,6 @@
             document.getElementById("m-economy").checked = data.config.modules.economy;
             document.getElementById("m-tempvoice").checked = data.config.modules.tempvoice;
 
-            // Formular-Werte befüllen
             document.getElementById("w-title").value = data.config.welcomeEmbed.title || "";
             document.getElementById("w-desc").value = data.config.welcomeEmbed.description || "";
             document.getElementById("w-color").value = data.config.welcomeEmbed.color || "#5865F2";
@@ -577,6 +587,31 @@
         list.forEach(item => { 
             el.innerHTML += `<option value="${item.id}" ${item.id === selected ? 'selected' : ''}># ${item.name}</option>`; 
         });
+    }
+
+    // DATEIUPLOAD FÜR AVATAR UND BANNER
+    async function uploadAsset(type) {
+        const fileInput = document.getElementById(`bot-${type}-file`);
+        if (!fileInput.files || fileInput.files.length === 0) return;
+
+        popToast(`Lade ${type} in die Cloud...`);
+        const formData = new FormData();
+        formData.append(type, fileInput.files[0]);
+
+        try {
+            const res = await fetch(`${API}/api/upload-${type}`, {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            if (res.ok) {
+                popToast(`${type === 'avatar' ? 'Profilbild' : 'Banner'} erfolgreich aktualisiert! ✨`);
+            } else {
+                popToast(`Fehler: ${data.error}`);
+            }
+        } catch (e) {
+            popToast("Asset-Upload fehlgeschlagen!");
+        }
     }
 
     async function saveAll() {
@@ -653,10 +688,8 @@
         setTimeout(() => { t.style.display = "none"; }, 4000);
     }
 
-    // Initiales Laden beim Starten der Website
     window.onload = function() {
         loadConfig();
-        // Setzt den Loop für das sekundengenaue Live-Ping Update (alle 3000ms / 3 Sekunden)
         setInterval(updateLivePing, 3000);
     };
 </script>
