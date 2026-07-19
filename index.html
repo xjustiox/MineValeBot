@@ -2,42 +2,77 @@
 <html lang="de">
 <head>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #0f0c29; color: #fff; font-family: 'Orbitron', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid #6366f1; }
+        body { font-family: 'Inter', sans-serif; background: #050505; color: white; }
+        .sidebar { background: #0a0a0a; border-right: 1px solid #1f2937; }
+        .card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(10px); border: 1px solid #374151; }
+        .gradient-text { background: linear-gradient(90deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="p-10">
-    <h1 class="text-4xl text-center mb-10 text-purple-400">MATRIX CORE DASHBOARD</h1>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <div class="glass p-6 rounded-2xl">
-            <h2 class="text-blue-400 mb-4">WELCOMER</h2>
-            <input id="wChannel" placeholder="Channel ID" class="w-full bg-black p-2 mb-2">
-            <input id="wMsg" placeholder="Nachricht" class="w-full bg-black p-2 mb-4">
-        </div>
-        
-        <div class="glass p-6 rounded-2xl">
-            <h2 class="text-purple-400 mb-4">MODERATION</h2>
-            <input id="lChannel" placeholder="Log-Channel ID" class="w-full bg-black p-2 mb-4">
-        </div>
-    </div>
+<body class="flex min-h-screen">
+    <aside class="sidebar w-64 p-8">
+        <h1 class="text-xl font-bold mb-10 gradient-text">MATRIX DASHBOARD</h1>
+        <nav class="space-y-6">
+            <button onclick="tab('overview')" class="block text-gray-400 hover:text-white transition">Übersicht</button>
+            <button onclick="tab('welcomer')" class="block text-gray-400 hover:text-white transition">Welcomer Modul</button>
+            <button onclick="tab('economy')" class="block text-gray-400 hover:text-white transition">Economy & Moderation</button>
+        </nav>
+    </aside>
 
-    <div class="text-center mt-10">
-        <button onclick="save()" class="bg-indigo-600 px-10 py-3 rounded-full hover:scale-105 transition">SPEICHERN</button>
-    </div>
+    <main class="flex-1 p-12">
+        <div id="content" class="max-w-4xl mx-auto">
+            <h2 id="page-title" class="text-3xl font-bold mb-8">Übersicht</h2>
+            
+            <div id="tab-overview" class="tab-pane grid grid-cols-2 gap-6">
+                <div class="card p-6 rounded-2xl">Ping: <span id="ping" class="text-indigo-400">...</span>ms</div>
+                <div class="card p-6 rounded-2xl">Mitglieder: <span id="members" class="text-purple-400">...</span></div>
+            </div>
+
+            <div id="tab-welcomer" class="tab-pane hidden space-y-6">
+                <div class="card p-8 rounded-2xl">
+                    <label class="block mb-2">Welcome Channel ID</label>
+                    <input id="w-channel" class="w-full bg-black p-3 rounded-lg border border-gray-700 mb-4">
+                    <label class="block mb-2">Willkommens Nachricht</label>
+                    <textarea id="w-msg" class="w-full bg-black p-3 rounded-lg border border-gray-700"></textarea>
+                </div>
+            </div>
+
+            <div id="tab-economy" class="tab-pane hidden space-y-6">
+                <div class="card p-8 rounded-2xl">
+                    <label class="block mb-2">Blacklist (mit Komma trennen)</label>
+                    <textarea id="blacklist" class="w-full bg-black p-3 rounded-lg border border-gray-700"></textarea>
+                </div>
+            </div>
+
+            <button onclick="saveAll()" class="mt-8 bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-3 rounded-xl font-bold hover:scale-105 transition">KONFIGURATION SPEICHERN</button>
+        </div>
+    </main>
 
     <script>
-        async function save() {
+        function tab(id) {
+            document.querySelectorAll('.tab-pane').forEach(t => t.classList.add('hidden'));
+            document.getElementById('tab-' + id).classList.remove('hidden');
+            document.getElementById('page-title').innerText = id.charAt(0).toUpperCase() + id.slice(1);
+        }
+
+        async function saveAll() {
             const data = {
-                welcomeChannelId: document.getElementById('wChannel').value,
-                welcomeMessage: document.getElementById('wMsg').value,
-                channels: { modLogId: document.getElementById('lChannel').value }
+                welcomeChannelId: document.getElementById('w-channel').value,
+                welcomeMessage: document.getElementById('w-msg').value,
+                automod: { blockedWords: document.getElementById('blacklist').value }
             };
             await fetch('/api/settings', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
-            alert('Daten im Matrix-Netzwerk aktualisiert!');
+            alert('Alles gespeichert!');
         }
+
+        fetch('/api/stats').then(r => r.json()).then(d => {
+            document.getElementById('ping').innerText = d.ping;
+            document.getElementById('members').innerText = d.memberCount;
+            document.getElementById('w-channel').value = d.config.welcomeChannelId || '';
+            document.getElementById('w-msg').value = d.config.welcomeMessage || '';
+            document.getElementById('blacklist').value = d.config.automod?.blockedWords || '';
+        });
     </script>
 </body>
 </html>
