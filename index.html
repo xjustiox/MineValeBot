@@ -504,6 +504,25 @@
         }
     }
 
+    // Holt Backend-Daten im Hintergrund ab und updatet NUR den Status & Ping live
+    async function updateLivePing() {
+        try {
+            const res = await fetch(`${API}/api/stats`);
+            const data = await res.json();
+            
+            const statusEl = document.getElementById("core-status");
+            statusEl.innerText = "CONNECTED // GALAXY MATRIX ONLINE";
+            statusEl.style.color = "var(--neon-blue)";
+            
+            document.getElementById("core-ping").innerText = `Latenz: ${data.ping}ms // User im Cache: ${data.memberCount}`;
+        } catch(e) {
+            const statusEl = document.getElementById("core-status");
+            statusEl.innerText = "DISCONNECTED // BACKEND OFFLINE"; 
+            statusEl.style.color = "var(--neon-magenta)";
+            document.getElementById("core-ping").innerText = `Latenz: --ms // User im Cache: --`;
+        }
+    }
+
     async function loadConfig() {
         try {
             const res = await fetch(`${API}/api/stats`);
@@ -546,8 +565,9 @@
 
             livePreview();
         } catch(e) { 
-            document.getElementById("core-status").innerText = "DISCONNECTED // BACKEND OFFLINE"; 
-            document.getElementById("core-status").style.color = "var(--neon-magenta)";
+            const statusEl = document.getElementById("core-status");
+            statusEl.innerText = "DISCONNECTED // BACKEND OFFLINE"; 
+            statusEl.style.color = "var(--neon-magenta)";
         }
     }
 
@@ -633,7 +653,12 @@
         setTimeout(() => { t.style.display = "none"; }, 4000);
     }
 
-    window.onload = loadConfig;
+    // Initiales Laden beim Starten der Website
+    window.onload = function() {
+        loadConfig();
+        // Setzt den Loop für das sekundengenaue Live-Ping Update (alle 3000ms / 3 Sekunden)
+        setInterval(updateLivePing, 3000);
+    };
 </script>
 </body>
 </html>
