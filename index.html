@@ -2,52 +2,94 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Matrix Bot Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATRIX CORE // DASHBOARD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: #fff; padding: 20px; }
-        .card { background: #2d2d2d; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        button { background: #5865F2; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
+        body { 
+            background: #050505; 
+            color: #00ff41; 
+            font-family: 'Courier Prime', monospace;
+            overflow-x: hidden;
+        }
+        .glass-panel { 
+            background: rgba(20, 20, 20, 0.8); 
+            backdrop-filter: blur(10px);
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+        .neon-text { text-shadow: 0 0 10px #00ff41; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #00ff41; }
     </style>
 </head>
-<body>
-    <h1>Matrix Bot Dashboard</h1>
-    <div class="card">
-        <h3>Server Statistik</h3>
-        <p>Ping: <span id="ping">-</span> ms</p>
-        <p>Mitglieder: <span id="members">-</span></p>
-    </div>
+<body class="p-4 md:p-10">
 
-    <div class="card">
-        <h3>Blacklist Management</h3>
-        <textarea id="blacklist" rows="4" style="width: 100%"></textarea>
-        <button onclick="saveSettings()">Einstellungen speichern</button>
-        <button onclick="restartBot()" style="background: #ed4245;">Reboot Bot</button>
-    </div>
+    <header class="text-center mb-16" data-aos="fade-down" data-aos-duration="1000">
+        <h1 class="text-6xl font-bold neon-text uppercase tracking-widest">Matrix Core</h1>
+        <p class="mt-2 text-white opacity-70">System Administration Interface</p>
+    </header>
 
+    <main class="max-w-5xl mx-auto space-y-12">
+        
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="glass-panel p-8 rounded-2xl" data-aos="fade-right" data-aos-duration="800">
+                <h2 class="text-xl mb-6 text-white uppercase border-b border-green-900 pb-2">System Status</h2>
+                <div class="flex justify-between py-2"><span>Latenz:</span> <span id="ping" class="font-bold">0</span> ms</div>
+                <div class="flex justify-between py-2"><span>User-Count:</span> <span id="members" class="font-bold">0</span></div>
+            </div>
+
+            <div class="glass-panel p-8 rounded-2xl" data-aos="fade-left" data-aos-duration="800">
+                <h2 class="text-xl mb-6 text-white uppercase border-b border-green-900 pb-2">Admin Control</h2>
+                <button onclick="restartBot()" class="w-full bg-red-900/30 hover:bg-red-600 border border-red-500 p-3 rounded text-red-500 hover:text-white transition-all font-bold">
+                    [ REBOOT BOT ]
+                </button>
+            </div>
+        </section>
+
+        <section class="glass-panel p-8 rounded-2xl" data-aos="zoom-in" data-aos-duration="1000">
+            <h2 class="text-xl mb-6 text-white uppercase">Automod Blacklist</h2>
+            <textarea id="blacklist" class="w-full h-32 bg-black border border-green-800 p-4 rounded text-green-400 focus:outline-none focus:border-green-400"></textarea>
+            <button onclick="saveSettings()" class="mt-6 w-full bg-green-900/30 hover:bg-green-600 border border-green-500 p-4 rounded text-white font-bold transition-all">
+                SYNCHRONISIERE DATENBANK
+            </button>
+        </section>
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Lade Daten vom Bot
+        AOS.init();
+
+        // Fetch Data
         fetch('/api/stats').then(res => res.json()).then(data => {
             document.getElementById('ping').innerText = data.ping;
             document.getElementById('members').innerText = data.memberCount;
             document.getElementById('blacklist').value = data.config.automod.blockedWords;
         });
 
-        // Einstellungen an den Bot senden
+        // Save Data
         function saveSettings() {
             const newWords = document.getElementById('blacklist').value;
             fetch('/api/settings', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ automod: { blockedWords: newWords } })
-            }).then(() => alert('Einstellungen aktualisiert!'));
+            }).then(() => alert('Matrix-Core wurde aktualisiert.'));
         }
 
+        // Reboot
         function restartBot() {
-            fetch('/api/settings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'restart' })
-            });
+            if(confirm("System neustarten?")) {
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: 'restart' })
+                });
+                alert("Reboot eingeleitet...");
+            }
         }
     </script>
 </body>
