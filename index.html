@@ -3,298 +3,546 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamCity Control Center</title>
+    <title>STREAMCITY // CORE CONTROL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #08090c;
-            --bg-surface: rgba(19, 21, 26, 0.65);
-            --bg-element: #1a1d24;
-            --bg-input: rgba(10, 11, 14, 0.8);
-            --color-brand: #5865F2;
-            --color-brand-glow: rgba(88, 101, 242, 0.35);
-            --color-cyan: #00f2fe;
-            --text-primary: #f5f6f8;
-            --text-secondary: #8a8e9d;
-            --color-success: #23a55a;
-            --color-danger: #f23f43;
-            --color-warning: #f0b232;
-            --border-neon: rgba(255, 255, 255, 0.05);
-            --glass-blur: blur(12px);
+            /* Radical New Color Palette */
+            --bg-dark: #040508;
+            --core-bright: #ffffff;
+            --core-dim: #818899;
+            
+            --neon-cyan: #00f2fe;
+            --neon-magenta: #ff0055;
+            --neon-blurple: #5865F2;
+            
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(20px);
+            
+            --font-main: 'Plus Jakarta Sans', sans-serif;
         }
 
-        * { box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; outline: none; }
         
-        /* Animierter, smoother Hintergrund */
         body { 
-            background: var(--bg-base); 
+            background-color: var(--bg-dark);
             background-image: 
-                radial-gradient(circle at 80% 20%, rgba(88, 101, 242, 0.07), transparent 45%),
-                radial-gradient(circle at 15% 80%, rgba(0, 242, 254, 0.04), transparent 40%);
-            color: var(--text-primary); 
-            margin: 0; 
-            display: flex; 
-            height: 100vh; 
-            overflow: hidden; 
+                radial-gradient(circle at 10% 10%, rgba(0, 242, 254, 0.15), transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(255, 0, 85, 0.08), transparent 40%);
+            color: var(--core-bright);
+            font-family: var(--font-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 14px;
+            letter-spacing: -0.02em;
         }
 
-        /* SIDEBAR (GLAS-EFFEKT) */
-        .sidebar { 
-            width: 280px; 
-            background: rgba(15, 17, 22, 0.7); 
+        /* --- FUTURISTIC VERTICAL NAVBAR --- */
+        .master-nav {
+            width: 100px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+            z-index: 10;
+        }
+
+        .nav-logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+            margin-bottom: 60px;
+            text-decoration: none;
+        }
+
+        .nav-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .nav-link {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--core-dim);
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            font-size: 1.4rem;
+        }
+
+        .nav-link:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: var(--core-bright);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: var(--core-bright);
+            color: var(--bg-dark);
+            border-color: var(--core-bright);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .reboot-zone {
+            margin-top: auto;
+        }
+
+        /* --- MAIN VIEWPORT --- */
+        .main-viewport {
+            flex: 1;
+            padding: 60px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .view-header {
+            margin-bottom: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: -0.05em;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .view-panel {
+            display: none;
+            animation: panelIn 0.5s var(--transition-main);
+        }
+
+        .view-panel.active {
+            display: block;
+        }
+
+        @keyframes panelIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* --- HUB TILES (STATISTICS) --- */
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .hub-tile {
+            background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
-            padding: 35px 24px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            border-right: 1px solid var(--border-neon); 
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s;
         }
-        .sidebar-header { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
-        .sidebar-header .logo-dot { width: 10px; height: 10px; background: var(--color-cyan); border-radius: 50%; box-shadow: 0 0 12px var(--color-cyan); }
-        .sidebar-header h2 { margin: 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(45deg, #fff, var(--text-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .nav-list { display: flex; flex-direction: column; gap: 8px; }
-        .nav-item { background: transparent; color: var(--text-secondary); border: none; padding: 14px 16px; text-align: left; width: 100%; font-size: 0.9rem; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s ease; font-weight: 500; }
-        .nav-item:hover { background: rgba(255, 255, 255, 0.03); color: var(--text-primary); transform: translateX(3px); }
-        .nav-item.active { background: var(--color-brand); color: white; font-weight: 600; box-shadow: 0 4px 15px var(--color-brand-glow); }
+        .hub-tile:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
 
-        /* CONTENT WORKSPACE */
-        .content-area { flex: 1; padding: 50px; overflow-y: auto; }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; animation: smoothFade 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes smoothFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .hub-tile::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            opacity: 0.5;
+        }
 
-        h1 { margin-top: 0; font-size: 2rem; font-weight: 800; margin-bottom: 35px; letter-spacing: -0.5px; }
-        
-        /* PREMIUM CARDS (GLASSMORPHISM) */
-        .panel-card { 
-            background: var(--bg-surface); 
+        .hub-tile h3 {
+            margin: 0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--core-dim);
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .hub-tile .stat-value {
+            margin: 15px 0 0 0;
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        /* --- CONTROL BOXES (FORMS) --- */
+        .control-box {
+            background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
-            padding: 30px; 
-            border-radius: 16px; 
-            margin-bottom: 25px; 
-            border: 1px solid var(--border-neon);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 24px;
+            margin-bottom: 30px;
         }
-        .panel-card h3 { margin-top: 0; font-size: 1.15rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+
+        .control-box h2 {
+            margin: 0 0 35px 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* --- NEON INPUTS --- */
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 10px; color: var(--core-dim); font-weight: 500; font-size: 0.9rem; }
         
-        /* GRID / CARDS */
-        .grid-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
-        .grid-item { background: var(--bg-surface); backdrop-filter: var(--glass-blur); padding: 22px; border-radius: 16px; border: 1px solid var(--border-neon); }
-        .grid-item h4 { margin: 0; color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
-        .grid-item p { margin: 12px 0 0 0; font-size: 1.8rem; font-weight: 800; }
+        input[type="text"], textarea, select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            color: var(--core-bright);
+            padding: 16px;
+            border-radius: 12px;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
 
-        /* TOGGLE SWITCHES */
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .toggle-row:last-child { border-bottom: none; }
-        .toggle-details h5 { margin: 0; font-size: 1rem; font-weight: 600; }
-        .toggle-details p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-secondary); }
+        input[type="text"]:focus, textarea:focus, select:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(0, 0, 0, 0.4);
+        }
 
-        .switch-container { position: relative; display: inline-block; width: 46px; height: 26px; }
-        .switch-container input { opacity: 0; width: 0; height: 0; }
-        .switch-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #242730; transition: .25s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 26px; }
-        .switch-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: #fff; transition: .25s cubic-bezier(0.16, 1, 0.3, 1); border-radius: 50%; }
-        input:checked + .switch-slider { background-color: var(--color-brand); box-shadow: 0 0 10px var(--color-brand-glow); }
-        input:checked + .switch-slider:before { transform: translateX(20px); }
+        textarea { resize: vertical; min-height: 100px; }
 
-        /* CONTROLS & INPUTS */
-        .input-box { margin-bottom: 22px; display: flex; flex-direction: column; }
-        .input-box label { margin-bottom: 9px; color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        input, select, textarea { background: var(--bg-input); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.06); padding: 14px 16px; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s; }
-        input:focus, select:focus, textarea:focus { border-color: var(--color-brand); outline: none; box-shadow: 0 0 12px rgba(88, 101, 242, 0.15); background: rgba(15,17,22,0.9); }
+        /* --- SWITCHES --- */
+        .opt-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--glass-border); }
+        .opt-row:last-child { border-bottom: none; }
+        .opt-meta h4 { margin: 0; font-size: 1rem; font-weight: 600; }
+        .opt-meta p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--core-dim); }
 
-        /* BUTTONS */
-        .action-btn { background: var(--color-brand); color: white; border: none; padding: 14px 28px; border-radius: 10px; font-size: 0.9rem; cursor: pointer; font-weight: 600; transition: all 0.2s; box-shadow: 0 4px 15px var(--color-brand-glow); }
-        .action-btn:hover { background: #4752c4; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5); }
-        .action-btn-danger { background: rgba(242, 63, 67, 0.08); color: var(--color-danger); border: 1px solid rgba(242, 63, 67, 0.2); padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-        .action-btn-danger:hover { background: var(--color-danger); color: white; box-shadow: 0 4px 15px rgba(242, 63, 67, 0.3); }
+        .tg-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .tg-switch input { opacity: 0; width: 0; height: 0; }
+        .tg-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 30px; }
+        .tg-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: #fff; transition: .3s; border-radius: 50%; }
+        input:checked + .tg-slider { background-color: var(--neon-blurple); box-shadow: 0 0 15px rgba(88, 101, 242, 0.5); }
+        input:checked + .tg-slider:before { transform: translateX(22px); }
 
-        /* FLEX CREATOR FÜR EMBED-DESIGNER */
-        .designer-split { display: flex; gap: 30px; }
-        .designer-inputs { flex: 1; }
+        /* --- ACTION BUTTONS --- */
+        .core-btn {
+            background: var(--core-bright);
+            color: var(--bg-dark);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .core-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .core-btn-danger {
+            background: transparent;
+            border: 1px solid rgba(255, 0, 85, 0.3);
+            color: var(--neon-magenta);
+            width: 54px; height: 54px; padding: 0; justify-content: center; border-radius: 16px;
+        }
         
-        /* REAL DISCORD EMBED PREVIEW */
-        .discord-preview-container { width: 380px; background: #2f3136; border-radius: 8px; padding: 16px; height: fit-content; border-left: 4px solid var(--color-brand); box-shadow: 0 4px 20px rgba(0,0,0,0.4); position: sticky; top: 0; }
-        .discord-author { font-size: 0.75rem; color: #fff; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
-        .discord-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
-        .discord-desc { font-size: 0.875rem; color: #dcddde; line-height: 1.375; word-wrap: break-word; }
-        .discord-img { width: 100%; border-radius: 4px; margin-top: 10px; display: none; object-fit: cover; max-height: 200px; }
+        .core-btn-danger:hover {
+            background: var(--neon-magenta);
+            color: #fff;
+            border-color: var(--neon-magenta);
+            box-shadow: 0 10px 30px rgba(255, 0, 85, 0.3);
+        }
 
-        /* TOAST ALERTS */
-        #status-toast { position: fixed; bottom: 30px; right: 30px; padding: 16px 28px; border-radius: 12px; font-size: 0.9rem; font-weight: 600; display: none; background: #13151a; border: 1px solid var(--border-neon); z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: translateY(0); animation: toastIn 0.2s ease; }
-        @keyframes toastIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* --- EMBED DESIGNER SPLIT --- */
+        .designer-core { display: flex; gap: 40px; }
+        .designer-controls { flex: 1; }
+
+        /* --- ULTRA MODERN EMBED PREVIEW --- */
+        .mock-discord {
+            width: 360px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky; top: 20px;
+        }
+
+        .mock-embed {
+            border-left: 4px solid var(--neon-blurple);
+            background: rgba(255,255,255,0.02);
+            padding: 16px;
+            border-radius: 4px 12px 12px 4px;
+        }
+
+        .mock-title { font-weight: 700; font-size: 1.1rem; color: #fff; margin-bottom: 8px; }
+        .mock-desc { font-size: 0.9rem; color: #b9bbbe; line-height: 1.4; }
+        .mock-img { width: 100%; border-radius: 8px; margin-top: 15px; display: none; object-fit: cover; max-height: 200px; border: 1px solid var(--glass-border); }
+
+        /* --- STATUS TOAST --- */
+        #status-core {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--core-bright);
+            color: var(--bg-dark);
+            padding: 16px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            z-index: 1000;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            display: none;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        #status-core.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Color Input Styling */
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
+
     </style>
 </head>
 <body>
 
-<div id="status-toast"></div>
+<div id="status-core"></div>
 
-<div class="sidebar">
-    <div>
-        <div class="sidebar-header">
-            <div class="logo-dot"></div>
-            <h2>StreamCity v2</h2>
-        </div>
-        <div class="nav-list">
-            <button class="nav-item active" onclick="changePanel('overview', this)">📊 Systemstatus</button>
-            <button class="nav-item" onclick="changePanel('modules', this)">🧩 Module</button>
-            <button class="nav-item" onclick="changePanel('welcomer', this)">🖼️ Welcomer Designer</button>
-            <button class="nav-item" onclick="changePanel('logging', this)">📜 Log-Kanäle</button>
-            <button class="nav-item" onclick="changePanel('automod', this)">🛡️ AutoMod Core</button>
-        </div>
+<nav class="master-nav">
+    <a href="#" class="nav-logo">SC</a>
+    <div class="nav-stack">
+        <button class="nav-link active" onclick="openView('overview', this)">📊</button>
+        <button class="nav-link" onclick="openView('modules', this)">🧩</button>
+        <button class="nav-link" onclick="openView('welcomer', this)">🖼️</button>
+        <button class="nav-link" onclick="openView('logging', this)">📜</button>
+        <button class="nav-link" onclick="openView('automod', this)">🛡️</button>
     </div>
-    <button class="action-btn-danger" onclick="triggerCoreRestart()">🔄 Core Rebooten</button>
-</div>
+    <div class="reboot-zone">
+        <button class="core-btn core-btn-danger" onclick="executeRestart()">🔄</button>
+    </div>
+</nav>
 
-<div class="content-area">
+<main class="main-viewport">
     
-    <div id="overview" class="tab-panel active">
-        <h1>Dashboard-Zentrale</h1>
-        <div class="grid-layout">
-            <div class="grid-item"><h4>Bot Status</h4><p id="bot-status" style="color:var(--color-success); text-shadow: 0 0 10px rgba(35,165,90,0.2);">Online 🚀</p></div>
-            <div class="grid-item"><h4>API Latenz</h4><p id="bot-ping" style="color: var(--color-cyan);">0 ms</p></div>
-            <div class="grid-item"><h4>Server-Gilden</h4><p>1 Verknüpft</p></div>
+    <div id="overview" class="view-panel active">
+        <div class="view-header">
+            <h1>System Hub</h1>
         </div>
-        <div class="panel-card">
-            <h3>Systemnachricht</h3>
-            <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0; line-height: 1.6;">Alle Verbindungsknoten sind stabil. Änderungen im Dashboard werden verlustfrei per verschlüsseltem JSON an die Render-API übertragen und spiegeln sich ohne Lags direkt auf deinem Discord-Server wider.</p>
+        <div class="hub-grid">
+            <div class="hub-tile">
+                <h3>Core Status</h3>
+                <p class="stat-value" id="bot-status" style="color: var(--neon-cyan); text-shadow: 0 0 20px var(--neon-cyan);">Loading</p>
+            </div>
+            <div class="hub-tile">
+                <h3>Latenz</h3>
+                <p class="stat-value" id="bot-ping">0<span style="font-size:1.5rem; color:var(--core-dim);">ms</span></p>
+            </div>
+            <div class="hub-tile">
+                <h3>User Cache</h3>
+                <p class="stat-value" id="bot-members">--</p>
+            </div>
+        </div>
+        <div class="control-box">
+            <h2>🛰️ Connection Matrix</h2>
+            <p style="color: var(--core-dim); line-height: 1.7; margin: 0; font-size: 1rem;">
+                Willkommen im StreamCity Central Command. Alle Subsysteme sind nominal. Das Dashboard kommuniziert über gesicherte Endpunkte direkt mit dem Bot-Core auf Render. Änderungen werden atomar geschrieben und global auf deinem Discord-Cluster repliziert.
+            </p>
         </div>
     </div>
 
-    <div id="modules" class="tab-panel">
-        <h1>Module steuern</h1>
-        <div class="panel-card">
-            <h3>Erweiterungen umschalten</h3>
-            <div class="toggle-row">
-                <div class="toggle-details"><h5>Willkommens-Embeds</h5><p>Nutzt das konfigurierte Rich Embed im Zielkanal.</p></div>
-                <label class="switch-container"><input type="checkbox" id="mod-welcomer"><span class="switch-slider"></span></label>
+    <div id="modules" class="view-panel">
+        <div class="view-header"><h1>Subsysteme</h1></div>
+        <div class="control-box">
+            <h2>Aktivierungsschalter</h2>
+            <div class="opt-row">
+                <div class="opt-meta"><h4>Welcomer Protocol</h4><p>Visual Embeds für neue Client-Verbindungen.</p></div>
+                <label class="tg-switch"><input type="checkbox" id="mod-welcomer"><span class="tg-slider"></span></label>
             </div>
-            <div class="toggle-row">
-                <div class="toggle-details"><h5>AutoMod-System</h5><p>Filtert Schimpfwörter, Spam und Einladungen heraus.</p></div>
-                <label class="switch-container"><input type="checkbox" id="mod-automod"><span class="switch-slider"></span></label>
+            <div class="opt-row">
+                <div class="opt-meta"><h4>AutoMod Grid</h4><p>Algorithmische Inhaltsfilterung aktivieren.</p></div>
+                <label class="tg-switch"><input type="checkbox" id="mod-automod"><span class="tg-slider"></span></label>
             </div>
-            <button class="action-btn" style="margin-top:25px;" onclick="pushSettings()">Konfiguration sichern</button>
+            <div style="margin-top:40px;">
+                <button class="core-btn" onclick="commitChanges()">Konfiguration Sichern // <span style="opacity:0.7">CTRL+S</span></button>
+            </div>
         </div>
     </div>
 
-    <div id="welcomer" class="tab-panel">
-        <h1>🖼️ Welcomer Embed Designer</h1>
-        <div class="designer-split">
-            <div class="designer-inputs panel-card">
-                <div class="input-box"><label>Zielkanal für Willkommens-Embeds</label><select id="welcomeChannelSelect"></select></div>
-                <div class="input-box"><label>Embed Titel</label><input type="text" id="embedTitle" oninput="updateLivePreview()"></div>
-                <div class="input-box"><label>Embed Beschreibung</label><textarea id="embedDesc" oninput="updateLivePreview()"></textarea></div>
-                <div class="input-box"><label>Embed Akzentfarbe</label><input type="color" id="embedColor" style="height:45px; padding:2px; cursor:pointer;" oninput="updateLivePreview()"></div>
-                <div class="input-box"><label>Großes Banner (Bild-URL)</label><input type="text" id="embedImage" placeholder="https://..." oninput="updateLivePreview()"></div>
-                <button class="action-btn" onclick="pushSettings()">Änderungen live schalten</button>
+    <div id="welcomer" class="view-panel">
+        <div class="view-header"><h1>Visual Designer</h1></div>
+        <div class="designer-core">
+            <div class="designer-controls control-box">
+                <h2>🖼️ Welcomer Embed Engine</h2>
+                <div class="form-group">
+                    <label>Übertragungskanal</label>
+                    <select id="welcomeChannelSelect"></select>
+                </div>
+                <div class="form-group">
+                    <label>Embed Matrix Titel</label>
+                    <input type="text" id="embedTitle" oninput="refreshPreview()">
+                </div>
+                <div class="form-group">
+                    <label>Daten-Beschreibung ({user} = Client, {server} = Gilde)</label>
+                    <textarea id="embedDesc" oninput="refreshPreview()"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Farb-Signatur (HEX)</label>
+                    <input type="color" id="embedColor" style="height:50px; padding:4px; cursor:pointer;" oninput="refreshPreview()">
+                </div>
+                <div class="form-group">
+                    <label>Visual Asset (Bild-URL)</label>
+                    <input type="text" id="embedImage" placeholder="https://asset-stream.city/..." oninput="refreshPreview()">
+                </div>
+                <button class="core-btn" onclick="commitChanges()">In Core Laden // <span style="opacity:0.7">DEPLOY</span></button>
             </div>
             
-            <div>
-                <h4 style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;">Live Discord-Vorschau</h4>
-                <div class="discord-preview-container" id="discord-preview-card">
-                    <div class="discord-author">👋 Willkommen!</div>
-                    <div class="discord-title" id="prev-title">Titel</div>
-                    <div class="discord-desc" id="prev-desc">Beschreibung...</div>
-                    <img class="discord-img" id="prev-img" src="" alt="Embed Image">
+            <aside>
+                <h4 style="color: var(--core-dim); margin-bottom: 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;">Live Uplink Vorschau</h4>
+                <div class="mock-discord">
+                    <div class="mock-embed" id="mock-card">
+                        <div class="mock-title" id="mock-title">Titel</div>
+                        <div class="mock-desc" id="mock-desc">Warte auf Dateneingabe...</div>
+                        <img class="mock-img" id="mock-img" src="" alt="">
+                    </div>
                 </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="logging" class="view-panel">
+        <div class="view-header"><h1>Log Matrix</h1></div>
+        <div class="control-box">
+            <h2>📜 Daten-Routing</h2>
+            <div class="form-group"><label>Moderations-Uplink (z.B. /kick)</label><select id="modLogSelect"></select></div>
+            <div class="form-group"><label>AutoMod-Uplink (Verstöße)</label><select id="autoModLogSelect"></select></div>
+            <button class="core-btn" onclick="commitChanges()">Uplinks Speichern</button>
+        </div>
+    </div>
+
+    <div id="automod" class="view-panel">
+        <div class="view-header"><h1>AutoMod Grid</h1></div>
+        <div class="control-box">
+            <h2>🛡️ Filterparameter</h2>
+            <div class="opt-row" style="padding-top:0;">
+                <div class="opt-meta"><h4>Hyperlink-Zensur</h4><p>Blockiert externe Gilden-Einladungen.</p></div>
+                <label class="tg-switch"><input type="checkbox" id="am-blockLinks"><span class="tg-slider"></span></label>
             </div>
+            <div class="form-group" style="margin-top:30px;"><label>Blacklist-Vektoren (kommagetrennt)</label><textarea id="am-blockedWords"></textarea></div>
+            <button class="core-btn" onclick="commitChanges()">Grid Aktualisieren</button>
         </div>
     </div>
 
-    <div id="logging" class="tab-panel">
-        <h1>📜 Log-Kanal Routing</h1>
-        <div class="panel-card">
-            <h3>Ereignis-Überwachung</h3>
-            <div class="input-box"><label>Moderations-Logs (z.B. /kick)</label><select id="modLogSelect"></select></div>
-            <div class="input-box"><label>AutoMod-Logs (Zensuren & Links)</label><select id="autoModLogSelect"></select></div>
-            <button class="action-btn" onclick="pushSettings()">Routen speichern</button>
-        </div>
-    </div>
-
-    <div id="automod" class="tab-panel">
-        <h1>🛡️ AutoMod Einstellungen</h1>
-        <div class="panel-card">
-            <h3>Sicherheits-Parameter</h3>
-            <div class="toggle-row" style="padding-top:0;">
-                <div class="toggle-details"><h5>Links / Einladungen filtern</h5><p>Entfernt discord.gg-Links automatisch.</p></div>
-                <label class="switch-container"><input type="checkbox" id="am-blockLinks"><span class="switch-slider"></span></label>
-            </div>
-            <div class="input-box" style="margin-top:25px;"><label>Gesperrte Wörter (kommagetrennt)</label><textarea id="am-blockedWords"></textarea></div>
-            <button class="action-btn" onclick="pushSettings()">Filter aktualisieren</button>
-        </div>
-    </div>
-
-</div>
+</main>
 
 <script>
-    const API_URL = "https://streamcitytool-7cz3.onrender.com";
+    const CORE_API = "https://streamcitytool-7cz3.onrender.com";
 
-    function changePanel(id, btn) {
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
+    // Navigation System
+    function openView(viewId, linkEl) {
+        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        linkEl.classList.add('active');
     }
 
-    // Live-Vorschau für das Discord Embed
-    function updateLivePreview() {
-        const title = document.getElementById("embedTitle").value || "Kein Titel";
-        const desc = document.getElementById("embedDesc").value || "Keine Beschreibung...";
-        const color = document.getElementById("embedColor").value || "#5865F2";
-        const imgUrl = document.getElementById("embedImage").value;
+    // Real-time Preview Engine
+    function refreshPreview() {
+        const title = document.getElementById("embedTitle").value || "Core Uplink";
+        const desc = document.getElementById("embedDesc").value || "Verbindung stabil. Warte auf Client-Eintritt...";
+        const color = document.getElementById("embedColor").value || "#ffffff";
+        const img = document.getElementById("embedImage").value;
 
-        document.getElementById("prev-title").innerText = title;
-        document.getElementById("prev-desc").innerText = desc;
-        document.getElementById("discord-preview-card").style.borderLeftColor = color;
+        document.getElementById("mock-title").innerText = title;
+        document.getElementById("mock-desc").innerText = desc;
+        document.getElementById("mock-card").style.borderLeftColor = color;
 
-        const imgEl = document.getElementById("prev-img");
-        if(imgUrl && (imgUrl.startsWith("http://") || imgUrl.startsWith("https://"))) {
-            imgEl.src = imgUrl;
-            imgEl.style.display = "block";
+        const imgTag = document.getElementById("mock-img");
+        if(img && img.match(/^https?:\/\//)) {
+            imgTag.src = img;
+            imgTag.style.display = "block";
         } else {
-            imgEl.style.display = "none";
+            imgTag.style.display = "none";
         }
     }
 
-    async function syncData() {
-        showToast("Synchronisiere Verbindungen...", "var(--color-warning)");
+    async function syncCore() {
+        notify("Verbinde mit Core Matrix...", "#ffaa00");
         try {
-            const res = await fetch(`${API_URL}/api/stats`);
+            const res = await fetch(`${CORE_API}/api/stats`);
             const data = await res.json();
             
-            document.getElementById("bot-ping").innerText = `${data.ping} ms`;
+            // Stats
+            document.getElementById("bot-status").innerText = "NOMINAL";
+            document.getElementById("bot-ping").innerText = `${data.ping}`;
+            document.getElementById("bot-members").innerText = data.memberCount || "Aktiv";
             
-            buildChannelDropdown("welcomeChannelSelect", data.availableChannels, data.config.welcomeChannelId);
-            buildChannelDropdown("modLogSelect", data.availableChannels, data.config.channels?.modLogId);
-            buildChannelDropdown("autoModLogSelect", data.availableChannels, data.config.channels?.autoModLogId);
+            // Dropdowns
+            fillDropdown("welcomeChannelSelect", data.availableChannels, data.config.welcomeChannelId);
+            fillDropdown("modLogSelect", data.availableChannels, data.config.channels?.modLogId);
+            fillDropdown("autoModLogSelect", data.availableChannels, data.config.channels?.autoModLogId);
 
+            // Welcomer
             document.getElementById("embedTitle").value = data.config.welcomeEmbed?.title || "";
             document.getElementById("embedDesc").value = data.config.welcomeEmbed?.description || "";
-            document.getElementById("embedColor").value = data.config.welcomeEmbed?.color || "#5865F2";
+            document.getElementById("embedColor").value = data.config.welcomeEmbed?.color || "#ffffff";
             document.getElementById("embedImage").value = data.config.welcomeEmbed?.image || "";
 
+            // Toggles & AutoMod
             document.getElementById("mod-welcomer").checked = data.config.modules?.welcomer;
             document.getElementById("mod-automod").checked = data.config.modules?.automod;
             document.getElementById("am-blockLinks").checked = data.config.automod?.blockLinks;
             document.getElementById("am-blockedWords").value = data.config.automod?.blockedWords || "";
 
-            updateLivePreview();
-            showToast("Zentrale einsatzbereit!", "var(--color-success)", 2500);
-        } catch (e) { showToast("Verbindung verloren.", "var(--color-danger)"); }
+            refreshPreview();
+            notify("Core Uplink Bestätigt.", "#00ff88", 2500);
+        } catch (e) { notify("FEHLER: Keine Core-Antwort.", "#ff0044"); }
     }
 
-    function buildChannelDropdown(elementId, channels, selectedId) {
-        const select = document.getElementById(elementId);
-        select.innerHTML = `<option value="">-- Kanal wählen --</option>`;
+    function fillDropdown(id, channels, selected) {
+        const sel = document.getElementById(id);
+        sel.innerHTML = `<option value="">-- Kein Uplink --</option>`;
         channels.forEach(c => {
-            select.innerHTML += `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}># ${c.name}</option>`;
+            sel.innerHTML += `<option value="${c.id}" ${c.id === selected ? 'selected' : ''}>[ ${c.name} ]</option>`;
         });
     }
 
-    async function pushSettings() {
-        showToast("Speichere Parameter...", "var(--color-warning)");
-        const payload = {
+    async function commitChanges() {
+        notify("Übertrage Datenpakete...", "#ffaa00");
+        const data = {
             welcomeChannelId: document.getElementById("welcomeChannelSelect").value || null,
             welcomeEmbed: {
                 title: document.getElementById("embedTitle").value,
@@ -320,30 +568,31 @@
         };
 
         try {
-            await fetch(`${API_URL}/api/settings`, {
+            await fetch(`${CORE_API}/api/settings`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(data)
             });
-            showToast("Erfolgreich synchronisiert! ✨", "var(--color-brand)", 2500);
-        } catch (e) { showToast("Speichern fehlgeschlagen.", "var(--color-danger)"); }
+            notify("Core-Daten Synchronisiert. ✨", "#ffffff", 3000);
+        } catch (e) { notify("Uplink-Fehler beim Speichern.", "#ff0044"); }
     }
 
-    async function triggerCoreRestart() {
-        if(!confirm("Möchtest du den Core wirklich neu booten?")) return;
-        showToast("Reboot-Signal gesendet...", "var(--color-danger)");
-        try {
-            await fetch(`${API_URL}/api/settings`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "restart" }) });
-        } catch (e) {}
+    async function executeRestart() {
+        if(!confirm("⚠️ Core-Neustart erzwingen?")) return;
+        notify("Sende Kill-Signal...", "#ff0044");
+        try { fetch(`${CORE_API}/api/settings`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "restart" }) }); } catch (e) {}
     }
 
-    function showToast(t, c, d = 0) {
-        const toast = document.getElementById("status-toast");
-        toast.innerText = t; toast.style.borderLeft = `4px solid ${c}`; toast.style.display = "block";
-        if (d > 0) setTimeout(() => toast.style.display = "none", d);
+    function notify(text, color, duration = 0) {
+        const toast = document.getElementById("status-core");
+        toast.innerText = text;
+        toast.style.boxShadow = `0 10px 40px ${color}40`;
+        toast.style.display = "block";
+        setTimeout(() => toast.classList.add('show'), 50);
+        if (duration > 0) setTimeout(() => toast.classList.remove('show'), duration);
     }
 
-    window.onload = syncData;
+    window.onload = syncCore;
 </script>
 </body>
 </html>
