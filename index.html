@@ -1,1 +1,174 @@
-htmlcode
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamCity Bot Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #2f3136;
+            --card-color: #36393f;
+            --accent-color: #5865F2;
+            --text-color: #ffffff;
+            --success-color: #2ecc71;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: var(--accent-color); text-align: center; }
+        .card { background: var(--card-color); padding: 25px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        h2 { margin-top: 0; border-bottom: 2px solid #4f545c; padding-bottom: 10px; font-size: 1.2rem; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; color: #b9bbbe; font-weight: bold; }
+        input, select { background: #202225; color: white; border: 1px solid #202225; padding: 10px; border-radius: 5px; font-size: 1rem; }
+        input:focus, select:focus { border-color: var(--accent-color); outline: none; }
+        .btn { background: var(--accent-color); color: white; border: none; padding: 12px 20px; border-radius: 5px; font-size: 1rem; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.2s; }
+        .btn:hover { background: #4752c4; }
+        .role-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .role-row input { flex: 1; }
+        .role-row select { flex: 2; }
+        .remove-btn { background: #ed4245; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
+        .remove-btn:hover { background: #c93b3e; }
+        .add-btn { background: transparent; border: 2px dashed var(--accent-color); color: var(--accent-color); padding: 10px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 15px; }
+        .add-btn:hover { background: rgba(88, 101, 242, 0.1); }
+        #status-bar { text-align: center; font-weight: bold; margin-bottom: 20px; padding: 10px; border-radius: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>StreamCity Bot Dashboard</h1>
+    <div id="status-bar"></div>
+
+    <div class="card" style="display: flex; justify-content: space-around; text-align: center;">
+        <div><h4>Status</h4><p id="bot-status">Lädt...</p></div>
+        <div><h4>Server-Ping</h4><p id="bot-ping">0 ms</p></div>
+    </div>
+
+    <div class="card">
+        <h2>Kanal-Konfiguration</h2>
+        <div class="form-group">
+            <label for="welcomeChannel">Willkommens-Kanal (ID)</label>
+            <input type="text" id="welcomeChannel" placeholder="z.B. 1526383165453893752">
+        </div>
+        <div class="form-group">
+            <label for="logChannel">Log-Kanal (ID)</label>
+            <input type="text" id="logChannel" placeholder="z.B. 1526383165453893752">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🎭 Selfroles (Klick-Rollen) einrichten</h2>
+        <div id="roles-container">
+            </div>
+        <button type="button" class="add-btn" onclick="addRoleRow()">+ Neue Rolle hinzufügen</button>
+    </div>
+
+    <button class="btn" onclick="saveSettings()">Einstellungen speichern 💾</button>
+</div>
+
+<script>
+    // ⚠️ ERSETZE DIESE URL MIT DEINER ECHTEN RENDER-APP-URL!
+    const BOT_API_URL = "https://DEIN-BOT-PROJEKT.onrender.com"; 
+
+    let availableRolesFromGuild = [];
+
+    // Daten vom Bot laden, sobald die Website geöffnet wird
+    async function loadBotData() {
+        showStatus("Lade Daten vom Bot...", "#f1c40f");
+        try {
+            const response = await fetch(`${BOT_API_URL}/api/stats`);
+            const data = await response.json();
+            
+            document.getElementById("bot-status").innerText = data.status;
+            document.getElementById("bot-ping").innerText = `${data.ping} ms`;
+            document.getElementById("welcomeChannel").value = data.config.welcomeChannelId || "";
+            document.getElementById("logChannel").value = data.config.logChannelId || "";
+            
+            availableRolesFromGuild = data.availableRoles;
+
+            // Bestehende Selfroles anzeigen
+            document.getElementById("roles-container").innerHTML = "";
+            data.config.selfRoles.forEach(role => {
+                addRoleRow(role.id, role.label, role.emoji);
+            });
+
+            showStatus("Daten erfolgreich synchronisiert!", "#2ecc71", 3000);
+        } catch (error) {
+            console.error(error);
+            showStatus("Fehler: Verbindung zum Bot fehlgeschlagen! Läuft der Bot auf Render?", "#ed4245");
+        }
+    }
+
+    // Zeile für eine Klick-Rolle hinzufügen
+    function addRoleRow(selectedRoleId = "", label = "", emoji = "") {
+        const container = document.getElementById("roles-container");
+        const rowId = Date.now() + Math.random().toString(36).substr(2, 5);
+
+        let optionsHtml = `<option value="">-- Rolle auswählen --</option>`;
+        availableRolesFromGuild.forEach(role => {
+            const selected = role.id === selectedRoleId ? "selected" : "";
+            optionsHtml += `<option value="${role.id}" ${selected}>${role.name}</option>`;
+        });
+
+        const rowHtml = `
+            <div class="role-row" id="${rowId}">
+                <input type="text" placeholder="Emoji (z.B. 🎮)" value="${emoji}" class="role-emoji" style="max-width: 80px; text-align:center;">
+                <input type="text" placeholder="Button-Beschriftung (z.B. Gaming)" value="${label}" class="role-label">
+                <select class="role-id">${optionsHtml}</select>
+                <button class="remove-btn" onclick="document.getElementById('${rowId}').remove()">🗑️</button>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', rowHtml);
+    }
+
+    // Einstellungen sammeln und an den Bot senden
+    async function saveSettings() {
+        showStatus("Speichere Einstellungen...", "#f1c40f");
+
+        const welcomeChannelId = document.getElementById("welcomeChannel").value || null;
+        const logChannelId = document.getElementById("logChannel").value || null;
+
+        const selfRoles = [];
+        const rows = document.querySelectorAll(".role-row");
+        
+        rows.forEach(row => {
+            const id = row.querySelector(".role-id").value;
+            const label = row.querySelector(".role-label").value;
+            const emoji = row.querySelector(".role-emoji").value;
+
+            if (id && label) {
+                selfRoles.push({ id, label, emoji: emoji || "✨" });
+            }
+        });
+
+        try {
+            const response = await fetch(`${BOT_API_URL}/api/settings`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ welcomeChannelId, logChannelId, selfRoles })
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                showStatus("Erfolgreich im Bot gespeichert! Nutze nun /setup-selfroles in Discord.", "#2ecc71", 5000);
+            }
+        } catch (error) {
+            showStatus("Fehler beim Speichern der Daten.", "#ed4245");
+        }
+    }
+
+    function showStatus(text, color, duration = 0) {
+        const bar = document.getElementById("status-bar");
+        bar.innerText = text;
+        bar.style.background = color;
+        bar.style.display = "block";
+        if (duration > 0) {
+            setTimeout(() => { bar.style.display = "none"; }, duration);
+        }
+    }
+
+    // Starten
+    loadBotData();
+</script>
+</body>
+</html>
