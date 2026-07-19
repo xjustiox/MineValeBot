@@ -3,596 +3,637 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STREAMCITY // CORE CONTROL</title>
+    <title>GALAXY COMMAND // STREAMCITY</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Radical New Color Palette */
-            --bg-dark: #040508;
-            --core-bright: #ffffff;
-            --core-dim: #818899;
-            
-            --neon-cyan: #00f2fe;
+            --bg: #030407;
+            --surface: rgba(20, 24, 33, 0.6);
+            --border: rgba(255, 255, 255, 0.06);
+            --text: #ffffff;
+            --text-dim: #767f93;
+            --accent: #5865F2;
+            --neon-blue: #00f2fe;
             --neon-magenta: #ff0055;
-            --neon-blurple: #5865F2;
-            
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-blur: blur(20px);
-            
-            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --glass: blur(25px);
         }
 
-        * { box-sizing: border-box; outline: none; }
-        
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            outline: none;
+        }
+
         body { 
-            background-color: var(--bg-dark);
+            background: var(--bg); 
             background-image: 
-                radial-gradient(circle at 10% 10%, rgba(0, 242, 254, 0.15), transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(255, 0, 85, 0.08), transparent 40%);
-            color: var(--core-bright);
-            font-family: var(--font-main);
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            font-size: 14px;
-            letter-spacing: -0.02em;
+                radial-gradient(circle at 80% 20%, rgba(0, 242, 254, 0.05), transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 85, 0.03), transparent 50%);
+            color: var(--text); 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.01em;
         }
-
-        /* --- FUTURISTIC VERTICAL NAVBAR --- */
-        .master-nav {
-            width: 100px;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            border-right: 1px solid var(--glass-border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 0;
+        
+        /* FULL SCREEN SIDEBAR INTERFACE */
+        .sidebar { 
+            width: 300px; 
+            background: rgba(8, 10, 15, 0.7); 
+            backdrop-filter: var(--glass); 
+            -webkit-backdrop-filter: var(--glass); 
+            border-right: 1px solid var(--border); 
+            padding: 40px 25px; 
+            display: flex; 
+            flex-direction: column; 
             z-index: 10;
         }
 
-        .nav-logo {
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: var(--neon-cyan);
-            text-shadow: 0 0 15px var(--neon-cyan);
-            margin-bottom: 60px;
-            text-decoration: none;
+        .logo { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            background: linear-gradient(90deg, #fff, var(--neon-blue)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            margin-bottom: 40px; 
+            letter-spacing: -0.03em;
         }
 
-        .nav-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            flex: 1;
+        .menu { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px; 
+            flex: 1; 
+            overflow-y: auto; 
         }
 
-        .nav-link {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--core-dim);
-            width: 54px;
-            height: 54px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            font-size: 1.4rem;
+        .menu-btn { 
+            background: transparent; 
+            border: none; 
+            color: var(--text-dim); 
+            text-align: left; 
+            padding: 14px 18px; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
         }
 
-        .nav-link:hover {
-            border-color: rgba(255, 255, 255, 0.3);
-            color: var(--core-bright);
-            transform: translateY(-2px);
+        .menu-btn:hover { 
+            background: rgba(255, 255, 255, 0.03); 
+            color: #fff; 
         }
 
-        .nav-link.active {
-            background: var(--core-bright);
-            color: var(--bg-dark);
-            border-color: var(--core-bright);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        .menu-btn.active { 
+            background: var(--surface); 
+            color: var(--neon-blue); 
+            box-shadow: inset 1px 1px 0px rgba(255,255,255,0.05);
         }
 
-        .reboot-zone {
-            margin-top: auto;
+        /* PANEL AREA */
+        .viewport { 
+            flex: 1; 
+            padding: 60px; 
+            overflow-y: auto; 
         }
 
-        /* --- MAIN VIEWPORT --- */
-        .main-viewport {
-            flex: 1;
-            padding: 60px;
-            overflow-y: auto;
-            position: relative;
+        .panel { 
+            display: none; 
+            animation: fadeIn 0.4s cubic-bezier(0.23, 1, 0.32, 1); 
         }
 
-        .view-header {
-            margin-bottom: 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .panel.active { 
+            display: block; 
         }
 
-        h1 {
-            font-weight: 800;
-            font-size: 2.5rem;
-            margin: 0;
-            letter-spacing: -0.05em;
-            background: linear-gradient(to right, #fff, #aaa);
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(15px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        h1 { 
+            font-size: 2.6rem; 
+            font-weight: 800; 
+            margin: 0 0 40px 0; 
+            letter-spacing: -0.04em; 
+            background: linear-gradient(to right, #ffffff, #9da4b4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .view-panel {
-            display: none;
-            animation: panelIn 0.5s var(--transition-main);
+        .card { 
+            background: var(--surface); 
+            backdrop-filter: var(--glass); 
+            -webkit-backdrop-filter: var(--glass); 
+            border: 1px solid var(--border); 
+            padding: 35px; 
+            border-radius: 24px; 
+            margin-bottom: 30px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); 
         }
 
-        .view-panel.active {
-            display: block;
+        .card h2 { 
+            margin: 0 0 25px 0; 
+            font-size: 1.3rem; 
+            font-weight: 700; 
+            letter-spacing: -0.02em;
         }
 
-        @keyframes panelIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        /* FORM FIELD SYSTEM */
+        .field { 
+            margin-bottom: 24px; 
         }
 
-        /* --- HUB TILES (STATISTICS) --- */
-        .hub-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
+        .field label { 
+            display: block; 
+            margin-bottom: 10px; 
+            color: var(--text-dim); 
+            font-weight: 600; 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
         }
 
-        .hub-tile {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            padding: 30px;
-            border-radius: 24px;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.3s;
+        input, select, textarea { 
+            width: 100%; 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px solid var(--border); 
+            color: #fff; 
+            padding: 16px; 
+            border-radius: 14px; 
+            font-size: 1rem; 
+            font-family: inherit;
+            transition: all 0.2s ease; 
+        }
+
+        input:focus, select:focus, textarea:focus { 
+            border-color: rgba(255, 255, 255, 0.2); 
+            background: rgba(0, 0, 0, 0.5);
         }
         
-        .hub-tile:hover {
-            border-color: rgba(255, 255, 255, 0.15);
+        /* BUTTONS & TOGGLES */
+        .btn { 
+            background: #fff; 
+            color: #030407; 
+            border: none; 
+            padding: 16px 32px; 
+            border-radius: 14px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            font-family: inherit;
+            transition: all 0.2s ease; 
         }
 
-        .hub-tile::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
-            opacity: 0.5;
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2); 
         }
 
-        .hub-tile h3 {
-            margin: 0;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            color: var(--core-dim);
-            letter-spacing: 0.1em;
+        .btn-danger { 
+            background: rgba(255, 0, 85, 0.06); 
+            color: #ff0055; 
+            border: 1px solid rgba(255, 0, 85, 0.15); 
+            width: 100%; 
+            margin-top: auto; 
+            padding: 14px; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .btn-danger:hover { 
+            background: #ff0055; 
+            color: #fff; 
+            box-shadow: 0 10px 25px rgba(255, 0, 85, 0.2);
+        }
+
+        .row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 18px 0; 
+            border-bottom: 1px solid var(--border); 
+        }
+
+        .row:last-child { 
+            border-bottom: none; 
+        }
+
+        .meta h3 { 
+            margin: 0; 
+            font-size: 1.05rem; 
             font-weight: 600;
         }
 
-        .hub-tile .stat-value {
-            margin: 15px 0 0 0;
-            font-size: 2.8rem;
-            font-weight: 800;
-            letter-spacing: -0.05em;
+        .meta p { 
+            margin: 4px 0 0 0; 
+            font-size: 0.85rem; 
+            color: var(--text-dim); 
         }
 
-        /* --- CONTROL BOXES (FORMS) --- */
-        .control-box {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            padding: 40px;
-            border-radius: 24px;
-            margin-bottom: 30px;
+        .switch { 
+            position: relative; 
+            display: inline-block; 
+            width: 50px; 
+            height: 28px; 
         }
 
-        .control-box h2 {
-            margin: 0 0 35px 0;
-            font-size: 1.4rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .switch input { 
+            opacity: 0; 
+            width: 0; 
+            height: 0; 
         }
 
-        /* --- NEON INPUTS --- */
-        .form-group { margin-bottom: 25px; }
-        .form-group label { display: block; margin-bottom: 10px; color: var(--core-dim); font-weight: 500; font-size: 0.9rem; }
-        
-        input[type="text"], textarea, select {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--glass-border);
-            color: var(--core-bright);
-            padding: 16px;
-            border-radius: 12px;
-            font-family: var(--font-main);
-            font-size: 1rem;
-            transition: all 0.3s;
+        .slider { 
+            position: absolute; 
+            cursor: pointer; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: rgba(255, 255, 255, 0.1); 
+            transition: .3s; 
+            border-radius: 30px; 
         }
 
-        input[type="text"]:focus, textarea:focus, select:focus {
-            border-color: rgba(255, 255, 255, 0.4);
-            background: rgba(0, 0, 0, 0.4);
+        .slider:before { 
+            position: absolute; 
+            content: ""; 
+            height: 20px; 
+            width: 20px; 
+            left: 4px; 
+            bottom: 4px; 
+            background: #fff; 
+            transition: .3s; 
+            border-radius: 50%; 
         }
 
-        textarea { resize: vertical; min-height: 100px; }
-
-        /* --- SWITCHES --- */
-        .opt-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--glass-border); }
-        .opt-row:last-child { border-bottom: none; }
-        .opt-meta h4 { margin: 0; font-size: 1rem; font-weight: 600; }
-        .opt-meta p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--core-dim); }
-
-        .tg-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
-        .tg-switch input { opacity: 0; width: 0; height: 0; }
-        .tg-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .3s; border-radius: 30px; }
-        .tg-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: #fff; transition: .3s; border-radius: 50%; }
-        input:checked + .tg-slider { background-color: var(--neon-blurple); box-shadow: 0 0 15px rgba(88, 101, 242, 0.5); }
-        input:checked + .tg-slider:before { transform: translateX(22px); }
-
-        /* --- ACTION BUTTONS --- */
-        .core-btn {
-            background: var(--core-bright);
-            color: var(--bg-dark);
-            border: none;
-            padding: 16px 32px;
-            border-radius: 14px;
-            font-family: var(--font-main);
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+        input:checked + .slider { 
+            background: var(--neon-blue); 
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
         }
 
-        .core-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+        input:checked + .slider:before { 
+            transform: translateX(22px); 
         }
 
-        .core-btn-danger {
-            background: transparent;
-            border: 1px solid rgba(255, 0, 85, 0.3);
-            color: var(--neon-magenta);
-            width: 54px; height: 54px; padding: 0; justify-content: center; border-radius: 16px;
-        }
-        
-        .core-btn-danger:hover {
-            background: var(--neon-magenta);
-            color: #fff;
-            border-color: var(--neon-magenta);
-            box-shadow: 0 10px 30px rgba(255, 0, 85, 0.3);
+        /* LIVE EMBED PREVIEW STYLING */
+        .preview-box { 
+            width: 100%; 
+            max-width: 450px; 
+            background: #2f3136; 
+            border-radius: 8px; 
+            border-left: 4px solid var(--accent); 
+            padding: 16px; 
+            margin-top: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
-        /* --- EMBED DESIGNER SPLIT --- */
-        .designer-core { display: flex; gap: 40px; }
-        .designer-controls { flex: 1; }
-
-        /* --- ULTRA MODERN EMBED PREVIEW --- */
-        .mock-discord {
-            width: 360px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 20px;
-            height: fit-content;
-            position: sticky; top: 20px;
+        .prev-title { 
+            font-weight: 700; 
+            color: #fff; 
+            margin-bottom: 6px; 
+            font-size: 1.1rem; 
         }
 
-        .mock-embed {
-            border-left: 4px solid var(--neon-blurple);
-            background: rgba(255,255,255,0.02);
-            padding: 16px;
-            border-radius: 4px 12px 12px 4px;
+        .prev-desc { 
+            color: #dcddde; 
+            font-size: 0.9rem; 
+            line-height: 1.4; 
         }
 
-        .mock-title { font-weight: 700; font-size: 1.1rem; color: #fff; margin-bottom: 8px; }
-        .mock-desc { font-size: 0.9rem; color: #b9bbbe; line-height: 1.4; }
-        .mock-img { width: 100%; border-radius: 8px; margin-top: 15px; display: none; object-fit: cover; max-height: 200px; border: 1px solid var(--glass-border); }
-
-        /* --- STATUS TOAST --- */
-        #status-core {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: var(--core-bright);
-            color: var(--bg-dark);
-            padding: 16px 30px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            z-index: 1000;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-            display: none;
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-        
-        #status-core.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .prev-img { 
+            width: 100%; 
+            border-radius: 4px; 
+            margin-top: 12px; 
+            display: none; 
+            max-height: 180px; 
+            object-fit: cover; 
         }
 
-        /* Color Input Styling */
+        #toast { 
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            background: #fff; 
+            color: #030407; 
+            padding: 16px 30px; 
+            border-radius: 50px; 
+            font-weight: 700; 
+            z-index: 1000; 
+            display: none; 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5); 
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
         input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
-
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<div id="status-core"></div>
+<div id="toast"></div>
 
-<nav class="master-nav">
-    <a href="#" class="nav-logo">SC</a>
-    <div class="nav-stack">
-        <button class="nav-link active" onclick="openView('overview', this)">📊</button>
-        <button class="nav-link" onclick="openView('modules', this)">🧩</button>
-        <button class="nav-link" onclick="openView('welcomer', this)">🖼️</button>
-        <button class="nav-link" onclick="openView('logging', this)">📜</button>
-        <button class="nav-link" onclick="openView('automod', this)">🛡️</button>
+<div class="sidebar">
+    <div class="logo">STREAMCITY OS</div>
+    <div class="menu">
+        <button class="menu-btn active" onclick="switchTab('tab-hub', this)">📊 System Hub</button>
+        <button class="menu-btn" onclick="switchTab('tab-modules', this)">🧩 Subsysteme</button>
+        <button class="menu-btn" onclick="switchTab('tab-welcome', this)">👋 Welcomer & Leaver</button>
+        <button class="menu-btn" onclick="switchTab('tab-logs', this)">📜 Log Routing</button>
+        <button class="menu-btn" onclick="switchTab('tab-automod', this)">🛡️ Advanced AutoMod</button>
+        <button class="menu-btn" onclick="switchTab('tab-levels', this)">✨ XP & Levels</button>
+        <button class="menu-btn" onclick="switchTab('tab-economy', this)">🪙 Economy & Games</button>
+        <button class="menu-btn" onclick="switchTab('tab-tempvoice', this)">🔊 Temp Voice</button>
     </div>
-    <div class="reboot-zone">
-        <button class="core-btn core-btn-danger" onclick="executeRestart()">🔄</button>
-    </div>
-</nav>
+    <button class="btn-danger" onclick="fireRestart()">🔄 Matrix Rebooten</button>
+</div>
 
-<main class="main-viewport">
-    
-    <div id="overview" class="view-panel active">
-        <div class="view-header">
-            <h1>System Hub</h1>
+<div class="viewport">
+
+    <div id="tab-hub" class="panel active">
+        <h1>Galaxy Matrix Status</h1>
+        <div class="card">
+            <h2>Live-Verbindung</h2>
+            <p style="font-size:1.3rem; margin:0; color:var(--neon-blue); font-weight:800; letter-spacing: 0.05em;" id="core-status">UPLINK AUFBAUEN...</p>
+            <p style="color:var(--text-dim); margin-top:12px; font-weight: 500;" id="core-ping">Latenz: 0ms // User im Cache: --</p>
         </div>
-        <div class="hub-grid">
-            <div class="hub-tile">
-                <h3>Core Status</h3>
-                <p class="stat-value" id="bot-status" style="color: var(--neon-cyan); text-shadow: 0 0 20px var(--neon-cyan);">Loading</p>
-            </div>
-            <div class="hub-tile">
-                <h3>Latenz</h3>
-                <p class="stat-value" id="bot-ping">0<span style="font-size:1.5rem; color:var(--core-dim);">ms</span></p>
-            </div>
-            <div class="hub-tile">
-                <h3>User Cache</h3>
-                <p class="stat-value" id="bot-members">--</p>
-            </div>
-        </div>
-        <div class="control-box">
-            <h2>🛰️ Connection Matrix</h2>
-            <p style="color: var(--core-dim); line-height: 1.7; margin: 0; font-size: 1rem;">
-                Willkommen im StreamCity Central Command. Alle Subsysteme sind nominal. Das Dashboard kommuniziert über gesicherte Endpunkte direkt mit dem Bot-Core auf Render. Änderungen werden atomar geschrieben und global auf deinem Discord-Cluster repliziert.
+        <div class="card">
+            <h2>🛸 Central Command Unit</h2>
+            <p style="color: var(--text-dim); line-height: 1.7; margin: 0; font-size: 1rem;">
+                Willkommen im überarbeiteten Hauptquartier deines Discord-Bots. Über dieses Panel hast du die volle Kontrolle über alle fortgeschrittenen Parameter des Systems. Alle Änderungen werden in Echtzeit in deine Cloud-Datenbank auf Render repliziert und ohne Bot-Neustart aktiv.
             </p>
         </div>
     </div>
 
-    <div id="modules" class="view-panel">
-        <div class="view-header"><h1>Subsysteme</h1></div>
-        <div class="control-box">
-            <h2>Aktivierungsschalter</h2>
-            <div class="opt-row">
-                <div class="opt-meta"><h4>Welcomer Protocol</h4><p>Visual Embeds für neue Client-Verbindungen.</p></div>
-                <label class="tg-switch"><input type="checkbox" id="mod-welcomer"><span class="tg-slider"></span></label>
-            </div>
-            <div class="opt-row">
-                <div class="opt-meta"><h4>AutoMod Grid</h4><p>Algorithmische Inhaltsfilterung aktivieren.</p></div>
-                <label class="tg-switch"><input type="checkbox" id="mod-automod"><span class="tg-slider"></span></label>
-            </div>
-            <div style="margin-top:40px;">
-                <button class="core-btn" onclick="commitChanges()">Konfiguration Sichern // <span style="opacity:0.7">CTRL+S</span></button>
-            </div>
+    <div id="tab-modules" class="panel">
+        <h1>Modul-Verwaltung</h1>
+        <div class="card">
+            <h2>Gilden-Module de-/aktivieren</h2>
+            <div class="row"><div class="meta"><h3>Welcomer Protocol</h3><p>Begrüßungs-Embeds für neue Client-Verbindungen.</p></div><label class="switch"><input type="checkbox" id="m-welcomer"><span class="slider"></span></label></div>
+            <div class="row"><div class="meta"><h3>Leaver Protocol</h3><p>Abschiedsnachrichten bei Server-Austritten triggern.</p></div><label class="switch"><input type="checkbox" id="m-leaver"><span class="slider"></span></label></div>
+            <div class="row"><div class="meta"><h3>AutoMod Grid Protection</h3><p>Algorithmische Inhaltsfilterung und Link-Sperren.</p></div><label class="switch"><input type="checkbox" id="m-automod"><span class="slider"></span></label></div>
+            <div class="row"><div class="meta"><h3>XP-Leveling System</h3><p>Chat-Aktivität messen und automatische Aufstiege berechnen.</p></div><label class="switch"><input type="checkbox" id="m-levels"><span class="slider"></span></label></div>
+            <div class="row"><div class="meta"><h3>Economy & Casino Matrix</h3><p>Münzsystem, tägliche Belohnungen und Wettspiele freischalten.</p></div><label class="switch"><input type="checkbox" id="m-economy"><span class="slider"></span></label></div>
+            <div class="row"><div class="meta"><h3>Dynamic Temp Voice</h3><p>Erstellung temporärer Sprachkanäle erlauben.</p></div><label class="switch"><input type="checkbox" id="m-tempvoice"><span class="slider"></span></label></div>
+            <button class="btn" style="margin-top:30px;" onclick="saveAll()">Module synchronisieren</button>
         </div>
     </div>
 
-    <div id="welcomer" class="view-panel">
-        <div class="view-header"><h1>Visual Designer</h1></div>
-        <div class="designer-core">
-            <div class="designer-controls control-box">
-                <h2>🖼️ Welcomer Embed Engine</h2>
-                <div class="form-group">
-                    <label>Übertragungskanal</label>
-                    <select id="welcomeChannelSelect"></select>
-                </div>
-                <div class="form-group">
-                    <label>Embed Matrix Titel</label>
-                    <input type="text" id="embedTitle" oninput="refreshPreview()">
-                </div>
-                <div class="form-group">
-                    <label>Daten-Beschreibung ({user} = Client, {server} = Gilde)</label>
-                    <textarea id="embedDesc" oninput="refreshPreview()"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Farb-Signatur (HEX)</label>
-                    <input type="color" id="embedColor" style="height:50px; padding:4px; cursor:pointer;" oninput="refreshPreview()">
-                </div>
-                <div class="form-group">
-                    <label>Visual Asset (Bild-URL)</label>
-                    <input type="text" id="embedImage" placeholder="https://asset-stream.city/..." oninput="refreshPreview()">
-                </div>
-                <button class="core-btn" onclick="commitChanges()">In Core Laden // <span style="opacity:0.7">DEPLOY</span></button>
-            </div>
+    <div id="tab-welcome" class="panel">
+        <h1>Join & Leave Manager</h1>
+        <div class="card">
+            <h2>👋 Willkommens-Embed Generator</h2>
+            <div class="field"><label>Welcome Kanal</label><select id="welcomeChannelId"></select></div>
+            <div class="field"><label>Embed Titel</label><input type="text" id="w-title" oninput="livePreview()"></div>
+            <div class="field"><label>Embed Beschreibung ({user} = Client, {server} = Gilde)</label><textarea id="w-desc" oninput="livePreview()"></textarea></div>
+            <div class="field"><label>Farbcode Signatur (HEX)</label><input type="color" id="w-color" style="height:50px; padding:4px; cursor:pointer;" oninput="livePreview()"></div>
+            <div class="field"><label>Banner Bild-URL</label><input type="text" id="w-image" placeholder="https://..." oninput="livePreview()"></div>
             
-            <aside>
-                <h4 style="color: var(--core-dim); margin-bottom: 20px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;">Live Uplink Vorschau</h4>
-                <div class="mock-discord">
-                    <div class="mock-embed" id="mock-card">
-                        <div class="mock-title" id="mock-title">Titel</div>
-                        <div class="mock-desc" id="mock-desc">Warte auf Dateneingabe...</div>
-                        <img class="mock-img" id="mock-img" src="" alt="">
-                    </div>
-                </div>
-            </aside>
-        </div>
-    </div>
-
-    <div id="logging" class="view-panel">
-        <div class="view-header"><h1>Log Matrix</h1></div>
-        <div class="control-box">
-            <h2>📜 Daten-Routing</h2>
-            <div class="form-group"><label>Moderations-Uplink (z.B. /kick)</label><select id="modLogSelect"></select></div>
-            <div class="form-group"><label>AutoMod-Uplink (Verstöße)</label><select id="autoModLogSelect"></select></div>
-            <button class="core-btn" onclick="commitChanges()">Uplinks Speichern</button>
-        </div>
-    </div>
-
-    <div id="automod" class="view-panel">
-        <div class="view-header"><h1>AutoMod Grid</h1></div>
-        <div class="control-box">
-            <h2>🛡️ Filterparameter</h2>
-            <div class="opt-row" style="padding-top:0;">
-                <div class="opt-meta"><h4>Hyperlink-Zensur</h4><p>Blockiert externe Gilden-Einladungen.</p></div>
-                <label class="tg-switch"><input type="checkbox" id="am-blockLinks"><span class="tg-slider"></span></label>
+            <h3 style="color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 30px;">Live Uplink Vorschau</h3>
+            <div class="preview-box" id="p-card">
+                <div class="prev-title" id="p-title">Titel</div>
+                <div class="prev-desc" id="p-desc">Beschreibung...</div>
+                <img class="prev-img" id="p-img" alt="Embed Asset">
             </div>
-            <div class="form-group" style="margin-top:30px;"><label>Blacklist-Vektoren (kommagetrennt)</label><textarea id="am-blockedWords"></textarea></div>
-            <button class="core-btn" onclick="commitChanges()">Grid Aktualisieren</button>
+        </div>
+        <div class="card">
+            <h2>😢 Leave Settings</h2>
+            <div class="field"><label>Leave Kanal</label><select id="leaveChannelId"></select></div>
+            <div class="field"><label>Leave Nachricht Text ({user} = Username)</label><input type="text" id="leaveMessage"></div>
+            <button class="btn" onclick="saveAll()">Welcome/Leave Deploien</button>
         </div>
     </div>
 
-</main>
+    <div id="tab-logs" class="panel">
+        <h1>Advanced Logging Matrix</h1>
+        <div class="card">
+            <h2>Kanal-Routing für Systemvorfälle</h2>
+            <div class="field"><label>Moderations-Logs (Kick, Ban, Mute-Aktionen)</label><select id="log-mod"></select></div>
+            <div class="field"><label>AutoMod-Logs (Zensierte Wörter & Link-Verstöße)</label><select id="log-am"></select></div>
+            <button class="btn" onclick="saveAll()">Log-Kanäle binden</button>
+        </div>
+    </div>
+
+    <div id="tab-automod" class="panel">
+        <h1>Content Guard Core</h1>
+        <div class="card">
+            <h2>Sicherheitsfilter & Wort-Zensur</h2>
+            <div class="row"><div class="meta"><h3>Invite Link Filter</h3><p>Blockiert alle discord.gg Einladungen im Chat automatisch.</p></div><label class="switch"><input type="checkbox" id="am-links"><span class="slider"></span></label></div>
+            <div class="field" style="margin-top:25px;"><label>Wort-Blacklist (kommagetrennt eintragen)</label><textarea id="am-words" style="min-height: 120px;"></textarea></div>
+            <button class="btn" onclick="saveAll()">Guard aktualisieren</button>
+        </div>
+    </div>
+
+    <div id="tab-levels" class="panel">
+        <h1>Level & XP Konfigurator</h1>
+        <div class="card">
+            <h2>Ranglisten-Algorithmus</h2>
+            <div class="field"><label>XP pro gesendeter Chat-Nachricht</label><input type="number" id="lvl-xp"></div>
+            <div class="field"><label>Level-Up Benachrichtigung ({user} = Erwähnung, {level} = Neues Level)</label><input type="text" id="lvl-msg"></div>
+            <button class="btn" onclick="saveAll()">XP-Raten kalibrieren</button>
+        </div>
+    </div>
+
+    <div id="tab-economy" class="panel">
+        <h1>Server-Währung & Casino</h1>
+        <div class="card">
+            <h2>Finanzsystem & Minigames</h2>
+            <div class="field"><label>Währungs-Symbol (z.B. Emoji)</label><input type="text" id="eco-sym"></div>
+            <div class="field"><label>Startguthaben für neue Server-Mitglieder</label><input type="number" id="eco-start"></div>
+            <div class="field"><label>Tägliche Belohnung (/daily Bonus)</label><input type="number" id="eco-daily"></div>
+            <button class="btn" onclick="saveAll()">Finanzen sichern</button>
+        </div>
+    </div>
+
+    <div id="tab-tempvoice" class="panel">
+        <h1>Temporäre Sprachkanäle</h1>
+        <div class="card">
+            <h2>Voice Creator Hub</h2>
+            <div class="field"><label>Kategorie-Auswahl (Eltern-Kategorie für neue Channels)</label><select id="voiceCategorySelect"></select></div>
+            <p style="color:var(--text-dim); font-size:0.95rem; line-height: 1.6;">
+                <strong>Anleitung:</strong> Erstelle auf deinem Discord-Server einen regulären Sprachkanal namens <code>➕ Kanal erstellen</code> innerhalb der hier ausgewählten Kategorie. Sobald ein Mitglied diesen Kanal betritt, klont der Bot vollautomatisch einen eigenen Sprachkanal und verschiebt den User! Sobald der Kanal wieder leer ist, wird er restlos gelöscht.
+            </p>
+            <button class="btn" onclick="saveAll()">Voice-Kategorie verknüpfen</button>
+        </div>
+    </div>
+
+</div>
 
 <script>
-    const CORE_API = "https://streamcitytool-7cz3.onrender.com";
+    const API = "https://streamcitytool-7cz3.onrender.com";
 
-    // Navigation System
-    function openView(viewId, linkEl) {
-        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        linkEl.classList.add('active');
+    function switchTab(id, btn) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
     }
 
-    // Real-time Preview Engine
-    function refreshPreview() {
-        const title = document.getElementById("embedTitle").value || "Core Uplink";
-        const desc = document.getElementById("embedDesc").value || "Verbindung stabil. Warte auf Client-Eintritt...";
-        const color = document.getElementById("embedColor").value || "#ffffff";
-        const img = document.getElementById("embedImage").value;
+    function livePreview() {
+        const t = document.getElementById("w-title").value || "Titel";
+        const d = document.getElementById("w-desc").value || "Beschreibung...";
+        const c = document.getElementById("w-color").value || "#5865F2";
+        const img = document.getElementById("w-image").value;
 
-        document.getElementById("mock-title").innerText = title;
-        document.getElementById("mock-desc").innerText = desc;
-        document.getElementById("mock-card").style.borderLeftColor = color;
-
-        const imgTag = document.getElementById("mock-img");
-        if(img && img.match(/^https?:\/\//)) {
-            imgTag.src = img;
-            imgTag.style.display = "block";
-        } else {
-            imgTag.style.display = "none";
+        document.getElementById("p-title").innerText = t;
+        document.getElementById("p-desc").innerText = d;
+        document.getElementById("p-card").style.borderLeftColor = c;
+        
+        const imgEl = document.getElementById("p-img");
+        if(img && img.startsWith("http")) { 
+            imgEl.src = img; 
+            imgEl.style.display = "block"; 
+        } else { 
+            imgEl.style.display = "none"; 
         }
     }
 
-    async function syncCore() {
-        notify("Verbinde mit Core Matrix...", "#ffaa00");
+    async function loadConfig() {
         try {
-            const res = await fetch(`${CORE_API}/api/stats`);
+            const res = await fetch(`${API}/api/stats`);
             const data = await res.json();
             
-            // Stats
-            document.getElementById("bot-status").innerText = "NOMINAL";
-            document.getElementById("bot-ping").innerText = `${data.ping}`;
-            document.getElementById("bot-members").innerText = data.memberCount || "Aktiv";
-            
-            // Dropdowns
-            fillDropdown("welcomeChannelSelect", data.availableChannels, data.config.welcomeChannelId);
-            fillDropdown("modLogSelect", data.availableChannels, data.config.channels?.modLogId);
-            fillDropdown("autoModLogSelect", data.availableChannels, data.config.channels?.autoModLogId);
+            document.getElementById("core-status").innerText = "CONNECTED // GALAXY MATRIX ONLINE";
+            document.getElementById("core-ping").innerText = `Latenz: ${data.ping}ms // User im Cache: ${data.memberCount}`;
 
-            // Welcomer
-            document.getElementById("embedTitle").value = data.config.welcomeEmbed?.title || "";
-            document.getElementById("embedDesc").value = data.config.welcomeEmbed?.description || "";
-            document.getElementById("embedColor").value = data.config.welcomeEmbed?.color || "#ffffff";
-            document.getElementById("embedImage").value = data.config.welcomeEmbed?.image || "";
+            // Dropdowns dynamisch generieren
+            buildDropdown("welcomeChannelId", data.availableChannels, data.config.welcomeChannelId);
+            buildDropdown("leaveChannelId", data.availableChannels, data.config.leaveChannelId);
+            buildDropdown("log-mod", data.availableChannels, data.config.channels?.modLogId);
+            buildDropdown("log-am", data.availableChannels, data.config.channels?.autoModLogId);
+            buildDropdown("voiceCategorySelect", data.availableCategories, data.config.channels?.tempVoiceCategoryId);
 
-            // Toggles & AutoMod
-            document.getElementById("mod-welcomer").checked = data.config.modules?.welcomer;
-            document.getElementById("mod-automod").checked = data.config.modules?.automod;
-            document.getElementById("am-blockLinks").checked = data.config.automod?.blockLinks;
-            document.getElementById("am-blockedWords").value = data.config.automod?.blockedWords || "";
+            // Module Toggles setzen
+            document.getElementById("m-welcomer").checked = data.config.modules.welcomer;
+            document.getElementById("m-leaver").checked = data.config.modules.leaver;
+            document.getElementById("m-automod").checked = data.config.modules.automod;
+            document.getElementById("m-levels").checked = data.config.modules.levels;
+            document.getElementById("m-economy").checked = data.config.modules.economy;
+            document.getElementById("m-tempvoice").checked = data.config.modules.tempvoice;
 
-            refreshPreview();
-            notify("Core Uplink Bestätigt.", "#00ff88", 2500);
-        } catch (e) { notify("FEHLER: Keine Core-Antwort.", "#ff0044"); }
+            // Formular-Werte befüllen
+            document.getElementById("w-title").value = data.config.welcomeEmbed.title || "";
+            document.getElementById("w-desc").value = data.config.welcomeEmbed.description || "";
+            document.getElementById("w-color").value = data.config.welcomeEmbed.color || "#5865F2";
+            document.getElementById("w-image").value = data.config.welcomeEmbed.image || "";
+            document.getElementById("leaveMessage").value = data.config.leaveMessage || "";
+
+            document.getElementById("am-links").checked = data.config.automod.blockLinks;
+            document.getElementById("am-words").value = data.config.automod.blockedWords || "";
+
+            document.getElementById("lvl-xp").value = data.config.levels.xpPerMessage || 15;
+            document.getElementById("lvl-msg").value = data.config.levels.levelUpMessage || "";
+
+            document.getElementById("eco-sym").value = data.config.economy.currencySymbol || "🪙";
+            document.getElementById("eco-start").value = data.config.economy.startingBalance || 100;
+            document.getElementById("eco-daily").value = data.config.economy.dailyReward || 50;
+
+            livePreview();
+        } catch(e) { 
+            document.getElementById("core-status").innerText = "DISCONNECTED // BACKEND OFFLINE"; 
+            document.getElementById("core-status").style.color = "var(--neon-magenta)";
+        }
     }
 
-    function fillDropdown(id, channels, selected) {
-        const sel = document.getElementById(id);
-        sel.innerHTML = `<option value="">-- Kein Uplink --</option>`;
-        channels.forEach(c => {
-            sel.innerHTML += `<option value="${c.id}" ${c.id === selected ? 'selected' : ''}>[ ${c.name} ]</option>`;
+    function buildDropdown(id, list, selected) {
+        const el = document.getElementById(id);
+        el.innerHTML = `<option value="">-- Kein Kanal verlinkt --</option>`;
+        list.forEach(item => { 
+            el.innerHTML += `<option value="${item.id}" ${item.id === selected ? 'selected' : ''}># ${item.name}</option>`; 
         });
     }
 
-    async function commitChanges() {
-        notify("Übertrage Datenpakete...", "#ffaa00");
-        const data = {
-            welcomeChannelId: document.getElementById("welcomeChannelSelect").value || null,
+    async function saveAll() {
+        popToast("Übertrage verschlüsselte Datenpakete...");
+        const payload = {
+            welcomeChannelId: document.getElementById("welcomeChannelId").value || null,
+            leaveChannelId: document.getElementById("leaveChannelId").value || null,
+            leaveMessage: document.getElementById("leaveMessage").value,
             welcomeEmbed: {
-                title: document.getElementById("embedTitle").value,
-                description: document.getElementById("embedDesc").value,
-                color: document.getElementById("embedColor").value,
+                title: document.getElementById("w-title").value,
+                description: document.getElementById("w-desc").value,
+                color: document.getElementById("w-color").value,
                 thumbnail: "{user_avatar}",
-                image: document.getElementById("embedImage").value
+                image: document.getElementById("w-image").value
             },
             channels: {
-                modLogId: document.getElementById("modLogSelect").value || null,
-                autoModLogId: document.getElementById("autoModLogSelect").value || null
+                modLogId: document.getElementById("log-mod").value || null,
+                autoModLogId: document.getElementById("log-am").value || null,
+                tempVoiceCategoryId: document.getElementById("voiceCategorySelect").value || null
             },
             modules: {
-                welcomer: document.getElementById("mod-welcomer").checked,
-                automod: document.getElementById("mod-automod").checked,
-                levels: true, fun: true
+                welcomer: document.getElementById("m-welcomer").checked,
+                leaver: document.getElementById("m-leaver").checked,
+                automod: document.getElementById("m-automod").checked,
+                levels: document.getElementById("m-levels").checked,
+                economy: document.getElementById("m-economy").checked,
+                tempvoice: document.getElementById("m-tempvoice").checked,
+                selfroles: true
             },
             automod: {
-                blockLinks: document.getElementById("am-blockLinks").checked,
+                blockLinks: document.getElementById("am-links").checked,
                 antiSpam: true,
-                blockedWords: document.getElementById("am-blockedWords").value
+                blockedWords: document.getElementById("am-words").value
+            },
+            levels: {
+                xpPerMessage: parseInt(document.getElementById("lvl-xp").value) || 15,
+                levelUpMessage: document.getElementById("lvl-msg").value
+            },
+            economy: {
+                currencySymbol: document.getElementById("eco-sym").value,
+                startingBalance: parseInt(document.getElementById("eco-start").value) || 100,
+                dailyReward: parseInt(document.getElementById("eco-daily").value) || 50
             }
         };
 
         try {
-            await fetch(`${CORE_API}/api/settings`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
+            const res = await fetch(`${API}/api/settings`, { 
+                method: "POST", 
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify(payload) 
             });
-            notify("Core-Daten Synchronisiert. ✨", "#ffffff", 3000);
-        } catch (e) { notify("Uplink-Fehler beim Speichern.", "#ff0044"); }
+            if(res.ok) popToast("Synchronisation vollständig! ✨");
+        } catch(e) { 
+            popToast("Fehler beim Speichern der Core-Daten!"); 
+        }
     }
 
-    async function executeRestart() {
-        if(!confirm("⚠️ Core-Neustart erzwingen?")) return;
-        notify("Sende Kill-Signal...", "#ff0044");
-        try { fetch(`${CORE_API}/api/settings`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "restart" }) }); } catch (e) {}
+    async function fireRestart() {
+        if(!confirm("⚠️ Bist du sicher, dass du den Bot-Cluster rebooten möchtest? Ich kappe kurz die Verbindung.")) return;
+        try { 
+            await fetch(`${API}/api/settings`, { 
+                method: "POST", 
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify({ action: "restart" }) 
+            }); 
+            popToast("Kill-Signal gesendet. Reconnecting...");
+        } catch(e) {}
     }
 
-    function notify(text, color, duration = 0) {
-        const toast = document.getElementById("status-core");
-        toast.innerText = text;
-        toast.style.boxShadow = `0 10px 40px ${color}40`;
-        toast.style.display = "block";
-        setTimeout(() => toast.classList.add('show'), 50);
-        if (duration > 0) setTimeout(() => toast.classList.remove('show'), duration);
+    function popToast(msg) {
+        const t = document.getElementById("toast"); 
+        t.innerText = msg; 
+        t.style.display = "block";
+        setTimeout(() => { t.style.display = "none"; }, 4000);
     }
 
-    window.onload = syncCore;
+    window.onload = loadConfig;
 </script>
 </body>
 </html>
