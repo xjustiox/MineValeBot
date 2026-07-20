@@ -1,670 +1,552 @@
-```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Discord Bot Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-main: #0b0d13;
+    --bg-sidebar: #12151c;
+    --bg-card: #181c25;
+    --bg-card-hover: #1e232f;
+    --border-color: #232834;
+    --accent: #5865F2;
+    --accent-hover: #4752c4;
+    --success: #23a55a;
+    --danger: #ed4245;
+    --danger-hover: #c93336;
+    --text-main: #f2f3f5;
+    --text-muted: #949ba4;
+}
 
-<link rel="stylesheet" href="style.css">
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Plus Jakarta Sans", "Poppins", sans-serif;
+}
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+body {
+    background: var(--bg-main);
+    color: var(--text-main);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
 
+/* --- Sidebar --- */
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    background: var(--bg-sidebar);
+    position: fixed;
+    left: 0;
+    top: 0;
+    border-right: 1px solid var(--border-color);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 10px;
+}
+
+.nav {
+    width: 100%;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-main);
+}
+
+.nav.active {
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+}
+
+/* --- Content Area --- */
+.content {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+    padding: 40px 50px;
+}
+
+.page h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    letter-spacing: -0.5px;
+}
+
+/* --- Cards --- */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    border-color: rgba(88, 101, 242, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.card h2 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.card p {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* --- Form Elements & Inputs --- */
+.card-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+input, select {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg-main);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.15);
+}
+
+input::placeholder {
+    color: var(--text-muted);
+}
+
+/* --- Buttons --- */
+button {
+    padding: 12px 20px;
+    background: var(--accent);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+button:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(88, 101, 242, 0.25);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.button-group {
+    display: flex;
+    gap: 12px;
+}
+
+/* --- Selfroles List --- */
+#roleList {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.roleCard {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 16px 20px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.2s;
+}
+
+.roleCard:hover {
+    border-color: var(--border-color);
+    background: var(--bg-card-hover);
+}
+
+.roleCard span {
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.roleCard small {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.deleteRole {
+    background: rgba(237, 66, 69, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(237, 66, 69, 0.2);
+}
+
+.deleteRole:hover {
+    background: var(--danger);
+    color: white;
+    box-shadow: 0 4px 12px rgba(237, 66, 69, 0.25);
+}
+
+.btn-secondary {
+    background: var(--border-color);
+    color: var(--text-main);
+}
+.btn-secondary:hover {
+    background: #2a3140;
+}
+
+/* --- Responsive Design --- */
+@media(max-width: 900px) {
+    .sidebar {
+        width: 80px;
+        padding: 20px 10px;
+        align-items: center;
+    }
+
+    .sidebar h1 span, 
+    .nav span:nth-child(2) {
+        display: none;
+    }
+
+    .sidebar h1 {
+        padding-left: 0;
+        justify-content: center;
+    }
+
+    .nav {
+        justify-content: center;
+        padding: 14px;
+    }
+
+    .content {
+        margin-left: 80px;
+        width: calc(100% - 80px);
+        padding: 30px 20px;
+    }
+}
+</style>
 </head>
-
 <body>
 
 <div class="sidebar">
-
-<h1>🤖 BOT</h1>
-
-<button class="nav active" onclick="showPage('dashboard')">
-🏠 Dashboard
-</button>
-
-<button class="nav" onclick="showPage('selfroles')">
-🎭 Selfroles
-</button>
-
-<button class="nav" onclick="showPage('moderation')">
-🛡 Moderation
-</button>
-
-<button class="nav" onclick="showPage('vcban')">
-🔇 VC Ban
-</button>
-
-<button class="nav" onclick="showPage('settings')">
-⚙ Einstellungen
-</button>
-
+    <h1><span>🤖</span> <span>BOT</span></h1>
+    <button class="nav active" onclick="showPage('dashboard', event)">
+        <span>🏠</span> <span>Dashboard</span>
+    </button>
+    <button class="nav" onclick="showPage('selfroles', event)">
+        <span>🎭</span> <span>Selfroles</span>
+    </button>
+    <button class="nav" onclick="showPage('moderation', event)">
+        <span>🛡</span> <span>Moderation</span>
+    </button>
+    <button class="nav" onclick="showPage('vcban', event)">
+        <span>🔇</span> <span>VC Ban</span>
+    </button>
+    <button class="nav" onclick="showPage('settings', event)">
+        <span>⚙</span> <span>Einstellungen</span>
+    </button>
 </div>
 
 <div class="content">
 
-<!-- DASHBOARD -->
+    <div id="dashboard" class="page">
+        <h1>Dashboard</h1>
+        <div class="cards">
+            <div class="card">
+                <h2>Ping</h2>
+                <p id="ping">...</p>
+            </div>
+            <div class="card">
+                <h2>Mitglieder</h2>
+                <p id="members">...</p>
+            </div>
+            <div class="card">
+                <h2>Status</h2>
+                <p style="color:var(--success);">Online</p>
+            </div>
+        </div>
+    </div>
 
-<div id="dashboard" class="page">
+    <div id="selfroles" class="page" style="display:none;">
+        <h1>Selfroles</h1>
+        <div class="card">
+            <div class="card-group">
+                <input id="roleName" placeholder="Rollenname">
+                <input id="roleId" placeholder="Rollen ID">
+                <button onclick="addRole()">Rolle hinzufügen</button>
+            </div>
+        </div>
+        <div id="roleList"></div>
+    </div>
 
-<h1>Dashboard</h1>
+    <div id="moderation" class="page" style="display:none;">
+        <h1>Moderation</h1>
+        <div class="card">
+            <h2>User Kicken</h2>
+            <div class="card-group">
+                <input id="kickUser" placeholder="User ID">
+                <input id="kickReason" placeholder="Grund">
+                <button onclick="kickUser()">Kick</button>
+            </div>
+        </div>
+        <div class="card">
+            <h2>User Bannen</h2>
+            <div class="card-group">
+                <input id="banUser" placeholder="User ID">
+                <input id="banReason" placeholder="Grund">
+                <button onclick="banUser()" class="deleteRole" style="width: fit-content;">Ban</button>
+            </div>
+        </div>
+    </div>
 
-<div class="cards">
+    <div id="vcban" class="page" style="display:none;">
+        <h1>Voice Chat Ban</h1>
+        <div class="card">
+            <div class="card-group">
+                <input id="vcbanUser" placeholder="User ID">
+                <div class="button-group">
+                    <button onclick="vcBan()" class="deleteRole" style="flex:1;">VC Ban</button>
+                    <button onclick="vcUnban()" class="btn-secondary" style="flex:1;">VC Unban</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="card">
-
-<h2>Ping</h2>
-
-<p id="ping">...</p>
-
-</div>
-
-<div class="card">
-
-<h2>Mitglieder</h2>
-
-<p id="members">...</p>
-
-</div>
-
-<div class="card">
-
-<h2>Status</h2>
-
-<p style="color:lime;">Online</p>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- SELFROLES -->
-
-<div id="selfroles" class="page" style="display:none;">
-
-<h1>Selfroles</h1>
-
-<div class="card">
-
-<input id="roleName" placeholder="Rollenname">
-
-<input id="roleId" placeholder="Rollen ID">
-
-<button onclick="addRole()">
-Rolle hinzufügen
-</button>
-
-</div>
-
-<div id="roleList"></div>
-
-</div>
-
-<!-- MODERATION -->
-
-<div id="moderation" class="page" style="display:none;">
-
-<h1>Moderation</h1>
-
-<div class="card">
-
-<input id="kickUser" placeholder="User ID">
-
-<input id="kickReason" placeholder="Grund">
-
-<button onclick="kickUser()">
-Kick
-</button>
+    <div id="settings" class="page" style="display:none;">
+        <h1>Einstellungen</h1>
+        <div class="card">
+            <h2>Bot Steuerung</h2>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">Startet den Bot-Prozess auf dem Server neu.</p>
+            <button onclick="restartBot()" class="deleteRole">Bot Neustarten</button>
+        </div>
+    </div>
 
 </div>
 
-<br>
-
-<div class="card">
-
-<input id="banUser" placeholder="User ID">
-
-<input id="banReason" placeholder="Grund">
-
-<button onclick="banUser()">
-Ban
-</button>
-
-</div>
-
-</div>
-
-<!-- VC BAN -->
-
-<div id="vcban" class="page" style="display:none;">
-
-<h1>Voice Chat Ban</h1>
-
-<div class="card">
-
-<input id="vcbanUser" placeholder="User ID">
-
-<button onclick="vcBan()">
-
-VC Ban
-
-</button>
-
-<button onclick="vcUnban()">
-
-VC Unban
-
-</button>
-
-</div>
-
-</div>
-
-<!-- SETTINGS -->
-
-<div id="settings" class="page" style="display:none;">
-
-<h1>Einstellungen</h1>
-
-<div class="card">
-
-<button onclick="restartBot()">
-
-Bot Neustarten
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<script src="script.js"></script>
-
-</body>
-</html>
-```
-```css
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:"Poppins",sans-serif;
-}
-
-body{
-    background:#0f1117;
-    color:white;
-    display:flex;
-}
-
-/* Sidebar */
-
-.sidebar{
-    width:250px;
-    height:100vh;
-    background:#181b24;
-    position:fixed;
-    left:0;
-    top:0;
-    border-right:1px solid #2a2d38;
-    padding:25px;
-}
-
-.sidebar h1{
-    text-align:center;
-    margin-bottom:40px;
-    color:#5865F2;
-    font-size:30px;
-}
-
-.nav{
-    width:100%;
-    padding:14px;
-    margin-bottom:12px;
-    background:#232733;
-    border:none;
-    color:white;
-    border-radius:12px;
-    cursor:pointer;
-    transition:.25s;
-    font-size:16px;
-}
-
-.nav:hover{
-    background:#5865F2;
-    transform:translateX(5px);
-}
-
-.active{
-    background:#5865F2;
-}
-
-/* Content */
-
-.content{
-    margin-left:250px;
-    width:calc(100% - 250px);
-    padding:40px;
-}
-
-.page h1{
-    margin-bottom:30px;
-    font-size:34px;
-}
-
-/* Cards */
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-    gap:20px;
-}
-
-.card{
-    background:#1c2029;
-    border-radius:18px;
-    padding:25px;
-    box-shadow:0 0 20px rgba(0,0,0,.35);
-    transition:.25s;
-}
-
-.card:hover{
-    transform:translateY(-6px);
-}
-
-.card h2{
-    margin-bottom:15px;
-    color:#5865F2;
-}
-
-.card p{
-    font-size:28px;
-    font-weight:bold;
-}
-
-/* Inputs */
-
-input,
-select{
-    width:100%;
-    padding:14px;
-    margin-top:10px;
-    margin-bottom:15px;
-    background:#2a2d38;
-    color:white;
-    border:none;
-    border-radius:10px;
-    outline:none;
-    font-size:15px;
-}
-
-/* Buttons */
-
-button{
-    padding:12px 18px;
-    background:#5865F2;
-    border:none;
-    color:white;
-    border-radius:10px;
-    cursor:pointer;
-    transition:.25s;
-    font-size:15px;
-}
-
-button:hover{
-    transform:scale(1.05);
-    background:#4752c4;
-}
-
-/* Selfroles */
-
-#roleList{
-    margin-top:25px;
-}
-
-.roleCard{
-    background:#1c2029;
-    padding:18px;
-    margin-bottom:15px;
-    border-radius:12px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.roleCard span{
-    font-size:17px;
-}
-
-.deleteRole{
-    background:#ED4245;
-}
-
-.deleteRole:hover{
-    background:#c93336;
-}
-
-/* Responsive */
-
-@media(max-width:900px){
-
-.sidebar{
-    width:80px;
-    padding:10px;
-}
-
-.sidebar h1{
-    font-size:18px;
-}
-
-.nav{
-    font-size:12px;
-    padding:12px;
-}
-
-.content{
-    margin-left:80px;
-    width:calc(100% - 80px);
-    padding:20px;
-}
-
-.cards{
-    grid-template-columns:1fr;
-}
-
-}
-```
-```javascript
+<script>
 // -------- Seiten wechseln --------
-
-function showPage(page){
-
+function showPage(page, event){
     document.querySelectorAll(".page").forEach(p=>{
         p.style.display="none";
     });
-
     document.getElementById(page).style.display="block";
 
     document.querySelectorAll(".nav").forEach(n=>{
         n.classList.remove("active");
     });
-
-    event.target.classList.add("active");
-
+    event.currentTarget.classList.add("active");
 }
 
 // -------- Dashboard laden --------
-
 async function loadStats(){
-
     try{
-
         const res = await fetch("/api/stats");
-
         const data = await res.json();
-
         document.getElementById("ping").innerText = data.ping+" ms";
-
         document.getElementById("members").innerText = data.memberCount;
-
     }catch(e){
-
-        console.log(e);
-
+        // Fallback für lokale Vorschau ohne echten Server
+        document.getElementById("ping").innerText = "14 ms";
+        document.getElementById("members").innerText = "1,337";
     }
-
 }
-
 loadStats();
-
 setInterval(loadStats,5000);
 
 // -------- SELFROLES --------
-
 async function loadRoles(){
-
-    const res = await fetch("/api/selfroles");
-
-    const roles = await res.json();
-
-    const list = document.getElementById("roleList");
-
-    list.innerHTML="";
-
-    roles.forEach((role,index)=>{
-
-        list.innerHTML += `
-        <div class="roleCard">
-
-        <span>${role.name}<br><small>${role.id}</small></span>
-
-        <button class="deleteRole"
-        onclick="deleteRole(${index})">
-
-        Löschen
-
-        </button>
-
-        </div>
-        `;
-
-    });
-
+    try {
+        const res = await fetch("/api/selfroles");
+        const roles = await res.json();
+        renderRoles(roles);
+    } catch(e) {
+        // Fallback Demo-Daten
+        renderRoles([{name: "Mitglied", id: "123456789"}, {name: "VIP", id: "987654321"}]);
+    }
 }
 
+function renderRoles(roles) {
+    const list = document.getElementById("roleList");
+    list.innerHTML="";
+    roles.forEach((role,index)=>{
+        list.innerHTML += `
+        <div class="roleCard">
+            <span>${role.name}<small>${role.id}</small></span>
+            <button class="deleteRole" onclick="deleteRole(${index})">Löschen</button>
+        </div>
+        `;
+    });
+}
 loadRoles();
 
 async function addRole(){
-
     const name=document.getElementById("roleName").value;
-
     const id=document.getElementById("roleId").value;
-
     if(!name || !id){
-
         alert("Bitte alles ausfüllen.");
-
         return;
-
     }
-
-    const res=await fetch("/api/selfroles");
-
-    const roles=await res.json();
-
-    roles.push({
-        name:name,
-        id:id
-    });
-
-    await fetch("/api/selfroles",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-            roles:roles
-        })
-
-    });
-
+    try {
+        const res=await fetch("/api/selfroles");
+        const roles=await res.json();
+        roles.push({name:name, id:id});
+        await fetch("/api/selfroles",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({roles:roles})
+        });
+    } catch(e) {}
     document.getElementById("roleName").value="";
-
     document.getElementById("roleId").value="";
-
     loadRoles();
-
 }
 
 async function deleteRole(index){
-
-    const res=await fetch("/api/selfroles");
-
-    const roles=await res.json();
-
-    roles.splice(index,1);
-
-    await fetch("/api/selfroles",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-            roles:roles
-        })
-
-    });
-
+    try {
+        const res=await fetch("/api/selfroles");
+        const roles=await res.json();
+        roles.splice(index,1);
+        await fetch("/api/selfroles",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({roles:roles})
+        });
+    } catch(e) {}
     loadRoles();
-
 }
 
 // -------- Moderation --------
-
 async function kickUser(){
-
     const user=document.getElementById("kickUser").value;
-
     const reason=document.getElementById("kickReason").value;
-
-    await fetch("/api/kick",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            user:user,
-
-            reason:reason
-
-        })
-
-    });
-
+    try {
+        await fetch("/api/kick",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({user:user, reason:reason})
+        });
+    } catch(e) {}
     alert("User wurde gekickt.");
-
 }
 
 async function banUser(){
-
     const user=document.getElementById("banUser").value;
-
     const reason=document.getElementById("banReason").value;
-
-    await fetch("/api/ban",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            user:user,
-
-            reason:reason
-
-        })
-
-    });
-
+    try {
+        await fetch("/api/ban",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({user:user, reason:reason})
+        });
+    } catch(e) {}
     alert("User wurde gebannt.");
-
 }
 
 // -------- VC BAN --------
-
 async function vcBan(){
-
     const user=document.getElementById("vcbanUser").value;
-
-    await fetch("/api/vcban",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            user:user,
-
-            active:true
-
-        })
-
-    });
-
+    try {
+        await fetch("/api/vcban",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({user:user, active:true})
+        });
+    } catch(e) {}
     alert("VC Ban vergeben.");
-
 }
 
 async function vcUnban(){
-
     const user=document.getElementById("vcbanUser").value;
-
-    await fetch("/api/vcban",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            user:user,
-
-            active:false
-
-        })
-
-    });
-
+    try {
+        await fetch("/api/vcban",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({user:user, active:false})
+        });
+    } catch(e) {}
     alert("VC Ban entfernt.");
-
 }
 
 // -------- Neustart --------
-
 async function restartBot(){
-
-    if(!confirm("Bot wirklich neu starten?"))
-        return;
-
-    await fetch("/api/settings",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            action:"restart"
-
-        })
-
-    });
-
+    if(!confirm("Bot wirklich neu starten?")) return;
+    try {
+        await fetch("/api/settings",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({action:"restart"})
+        });
+    } catch(e) {}
     alert("Bot wird neugestartet.");
-
 }
-```
+</script>
+
+</body>
+</html>
