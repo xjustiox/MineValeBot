@@ -124,12 +124,6 @@ body {
     margin-bottom: 20px;
 }
 
-.card:hover {
-    border-color: rgba(88, 101, 242, 0.3);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-}
-
 .card h2 {
     font-size: 14px;
     font-weight: 600;
@@ -164,7 +158,7 @@ input, select {
     transition: all 0.2s;
 }
 
-input:focus {
+input:focus, select:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.15);
 }
@@ -196,10 +190,6 @@ button:hover {
     box-shadow: 0 4px 12px rgba(88, 101, 242, 0.25);
 }
 
-button:active {
-    transform: translateY(0);
-}
-
 .button-group {
     display: flex;
     gap: 12px;
@@ -221,12 +211,6 @@ button:active {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: border-color 0.2s;
-}
-
-.roleCard:hover {
-    border-color: var(--border-color);
-    background: var(--bg-card-hover);
 }
 
 .roleCard span {
@@ -251,7 +235,6 @@ button:active {
 .deleteRole:hover {
     background: var(--danger);
     color: white;
-    box-shadow: 0 4px 12px rgba(237, 66, 69, 0.25);
 }
 
 .btn-secondary {
@@ -262,34 +245,12 @@ button:active {
     background: #2a3140;
 }
 
-/* --- Responsive Design --- */
 @media(max-width: 900px) {
-    .sidebar {
-        width: 80px;
-        padding: 20px 10px;
-        align-items: center;
-    }
-
-    .sidebar h1 span, 
-    .nav span:nth-child(2) {
-        display: none;
-    }
-
-    .sidebar h1 {
-        padding-left: 0;
-        justify-content: center;
-    }
-
-    .nav {
-        justify-content: center;
-        padding: 14px;
-    }
-
-    .content {
-        margin-left: 80px;
-        width: calc(100% - 80px);
-        padding: 30px 20px;
-    }
+    .sidebar { width: 80px; padding: 20px 10px; align-items: center; }
+    .sidebar h1 span, .nav span:nth-child(2) { display: none; }
+    .sidebar h1 { padding-left: 0; justify-content: center; }
+    .nav { justify-content: center; padding: 14px; }
+    .content { margin-left: 80px; width: calc(100% - 80px); padding: 30px 20px; }
 }
 </style>
 </head>
@@ -297,21 +258,11 @@ button:active {
 
 <div class="sidebar">
     <h1><span>🤖</span> <span>BOT</span></h1>
-    <button class="nav active" onclick="showPage('dashboard', event)">
-        <span>🏠</span> <span>Dashboard</span>
-    </button>
-    <button class="nav" onclick="showPage('selfroles', event)">
-        <span>🎭</span> <span>Selfroles</span>
-    </button>
-    <button class="nav" onclick="showPage('moderation', event)">
-        <span>🛡</span> <span>Moderation</span>
-    </button>
-    <button class="nav" onclick="showPage('vcban', event)">
-        <span>🔇</span> <span>VC Ban</span>
-    </button>
-    <button class="nav" onclick="showPage('settings', event)">
-        <span>⚙</span> <span>Einstellungen</span>
-    </button>
+    <button class="nav active" onclick="showPage('dashboard', event)"><span>🏠</span> <span>Dashboard</span></button>
+    <button class="nav" onclick="showPage('selfroles', event)"><span>🎭</span> <span>Selfroles</span></button>
+    <button class="nav" onclick="showPage('moderation', event)"><span>🛡</span> <span>Moderation</span></button>
+    <button class="nav" onclick="showPage('vcban', event)"><span>🔇</span> <span>VC Ban</span></button>
+    <button class="nav" onclick="showPage('settings', event)"><span>⚙</span> <span>Einstellungen</span></button>
 </div>
 
 <div class="content">
@@ -319,28 +270,30 @@ button:active {
     <div id="dashboard" class="page">
         <h1>Dashboard</h1>
         <div class="cards">
-            <div class="card">
-                <h2>Ping</h2>
-                <p id="ping">...</p>
-            </div>
-            <div class="card">
-                <h2>Mitglieder</h2>
-                <p id="members">...</p>
-            </div>
-            <div class="card">
-                <h2>Status</h2>
-                <p style="color:var(--success);">Online</p>
-            </div>
+            <div class="card"><h2>Ping</h2><p id="ping">...</p></div>
+            <div class="card"><h2>Mitglieder</h2><p id="members">...</p></div>
+            <div class="card"><h2>Status</h2><p style="color:var(--success);">Online</p></div>
         </div>
     </div>
 
     <div id="selfroles" class="page" style="display:none;">
-        <h1>Selfroles</h1>
+        <h1>Selfroles Verwaltung</h1>
         <div class="card">
-            <div class="card-group">
-                <input id="roleName" placeholder="Rollenname">
-                <input id="roleId" placeholder="Rollen ID">
-                <button onclick="addRole()">Rolle hinzufügen</button>
+            <h2>Rolle zur Liste hinzufügen</h2>
+            <div class="card-group" style="margin-top: 15px;">
+                <select id="roleSelectDropdown">
+                    <option value="">Lade Server-Rollen...</option>
+                </select>
+                <button onclick="addRoleFromDropdown()">Rolle übernehmen & hinzufügen</button>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Setup Nachricht senden</h2>
+            <div class="card-group" style="margin-top: 15px;">
+                <select id="channelSelectDropdown">
+                    <option value="">Lade Textkanäle...</option>
+                </select>
+                <button onclick="sendSetupEmbed()" class="btn-secondary">Setup-Embed in Kanal senden</button>
             </div>
         </div>
         <div id="roleList"></div>
@@ -350,16 +303,16 @@ button:active {
         <h1>Moderation</h1>
         <div class="card">
             <h2>User Kicken</h2>
-            <div class="card-group">
-                <input id="kickUser" placeholder="User ID">
+            <div class="card-group" style="margin-top: 15px;">
+                <select id="kickUserSelect"><option value="">Lade Mitglieder...</option></select>
                 <input id="kickReason" placeholder="Grund">
                 <button onclick="kickUser()">Kick</button>
             </div>
         </div>
         <div class="card">
             <h2>User Bannen</h2>
-            <div class="card-group">
-                <input id="banUser" placeholder="User ID">
+            <div class="card-group" style="margin-top: 15px;">
+                <select id="banUserSelect"><option value="">Lade Mitglieder...</option></select>
                 <input id="banReason" placeholder="Grund">
                 <button onclick="banUser()" class="deleteRole" style="width: fit-content;">Ban</button>
             </div>
@@ -370,7 +323,7 @@ button:active {
         <h1>Voice Chat Ban</h1>
         <div class="card">
             <div class="card-group">
-                <input id="vcbanUser" placeholder="User ID">
+                <select id="vcbanUserSelect"><option value="">Lade Mitglieder...</option></select>
                 <div class="button-group">
                     <button onclick="vcBan()" class="deleteRole" style="flex:1;">VC Ban</button>
                     <button onclick="vcUnban()" class="btn-secondary" style="flex:1;">VC Unban</button>
@@ -383,7 +336,7 @@ button:active {
         <h1>Einstellungen</h1>
         <div class="card">
             <h2>Bot Steuerung</h2>
-            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">Startet den Bot-Prozess auf dem Server neu.</p>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">Startet den Bot-Prozess neu.</p>
             <button onclick="restartBot()" class="deleteRole">Bot Neustarten</button>
         </div>
     </div>
@@ -391,20 +344,46 @@ button:active {
 </div>
 
 <script>
-// -------- Seiten wechseln --------
 function showPage(page, event){
-    document.querySelectorAll(".page").forEach(p=>{
-        p.style.display="none";
-    });
+    document.querySelectorAll(".page").forEach(p => p.style.display="none");
     document.getElementById(page).style.display="block";
-
-    document.querySelectorAll(".nav").forEach(n=>{
-        n.classList.remove("active");
-    });
+    document.querySelectorAll(".nav").forEach(n => n.classList.remove("active"));
     event.currentTarget.classList.add("active");
 }
 
-// -------- Dashboard laden --------
+async function loadInitialData() {
+    try {
+        // Rollen laden
+        const resRoles = await fetch("/api/guildroles");
+        const roles = await resRoles.json();
+        const roleDropdown = document.getElementById("roleSelectDropdown");
+        roleDropdown.innerHTML = '<option value="">Wähle eine Server-Rolle...</option>';
+        roles.forEach(r => {
+            roleDropdown.innerHTML += `<option value="${r.id}" data-name="${r.name}">${r.name} (${r.id})</option>`;
+        });
+
+        // Kanäle laden
+        const resChannels = await fetch("/api/guildchannels");
+        const channels = await resChannels.json();
+        const chanDropdown = document.getElementById("channelSelectDropdown");
+        chanDropdown.innerHTML = '<option value="">Wähle einen Ziel-Kanal...</option>';
+        channels.forEach(c => {
+            chanDropdown.innerHTML += `<option value="${c.id}">#${c.name}</option>`;
+        });
+
+        // Mitglieder laden
+        const resMembers = await fetch("/api/members");
+        const members = await resMembers.json();
+        ['kickUserSelect', 'banUserSelect', 'vcbanUserSelect'].forEach(id => {
+            const sel = document.getElementById(id);
+            sel.innerHTML = '<option value="">Wähle ein Mitglied...</option>';
+            members.forEach(m => {
+                sel.innerHTML += `<option value="${m.id}">${m.displayName} (@${m.username})</option>`;
+            });
+        });
+    } catch(e) { console.error("Daten konnten nicht geladen werden", e); }
+}
+
 async function loadStats(){
     try{
         const res = await fetch("/api/stats");
@@ -412,141 +391,114 @@ async function loadStats(){
         document.getElementById("ping").innerText = data.ping+" ms";
         document.getElementById("members").innerText = data.memberCount;
     }catch(e){
-        // Fallback für lokale Vorschau ohne echten Server
-        document.getElementById("ping").innerText = "14 ms";
-        document.getElementById("members").innerText = "1,337";
+        document.getElementById("ping").innerText = "12 ms";
+        document.getElementById("members").innerText = "540";
     }
 }
 loadStats();
-setInterval(loadStats,5000);
+loadInitialData();
+setInterval(loadStats, 5000);
 
 // -------- SELFROLES --------
 async function loadRoles(){
     try {
         const res = await fetch("/api/selfroles");
         const roles = await res.json();
-        renderRoles(roles);
-    } catch(e) {
-        // Fallback Demo-Daten
-        renderRoles([{name: "Mitglied", id: "123456789"}, {name: "VIP", id: "987654321"}]);
-    }
-}
-
-function renderRoles(roles) {
-    const list = document.getElementById("roleList");
-    list.innerHTML="";
-    roles.forEach((role,index)=>{
-        list.innerHTML += `
-        <div class="roleCard">
-            <span>${role.name}<small>${role.id}</small></span>
-            <button class="deleteRole" onclick="deleteRole(${index})">Löschen</button>
-        </div>
-        `;
-    });
+        const list = document.getElementById("roleList");
+        list.innerHTML="";
+        roles.forEach((role, index) => {
+            list.innerHTML += `
+            <div class="roleCard">
+                <span>${role.name} <small>ID: ${role.id}</small></span>
+                <button class="deleteRole" onclick="deleteRole(${index})">Löschen</button>
+            </div>`;
+        });
+    } catch(e) {}
 }
 loadRoles();
 
-async function addRole(){
-    const name=document.getElementById("roleName").value;
-    const id=document.getElementById("roleId").value;
-    if(!name || !id){
-        alert("Bitte alles ausfüllen.");
-        return;
-    }
-    try {
-        const res=await fetch("/api/selfroles");
-        const roles=await res.json();
-        roles.push({name:name, id:id});
-        await fetch("/api/selfroles",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({roles:roles})
-        });
-    } catch(e) {}
-    document.getElementById("roleName").value="";
-    document.getElementById("roleId").value="";
+async function addRoleFromDropdown(){
+    const dropdown = document.getElementById("roleSelectDropdown");
+    const selectedOption = dropdown.options[dropdown.selectedIndex];
+    if(!selectedOption.value) { alert("Bitte wähle eine Rolle aus."); return; }
+    
+    const id = selectedOption.value;
+    const name = selectedOption.getAttribute("data-name");
+
+    const res = await fetch("/api/selfroles");
+    const roles = await res.json();
+    roles.push({name, id});
+
+    await fetch("/api/selfroles", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({roles})
+    });
     loadRoles();
 }
 
 async function deleteRole(index){
-    try {
-        const res=await fetch("/api/selfroles");
-        const roles=await res.json();
-        roles.splice(index,1);
-        await fetch("/api/selfroles",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({roles:roles})
-        });
-    } catch(e) {}
+    const res = await fetch("/api/selfroles");
+    const roles = await res.json();
+    roles.splice(index, 1);
+    await fetch("/api/selfroles", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({roles})
+    });
     loadRoles();
 }
 
-// -------- Moderation --------
+async function sendSetupEmbed() {
+    const channelId = document.getElementById("channelSelectDropdown").value;
+    if(!channelId) { alert("Bitte wähle einen Kanal aus."); return; }
+
+    const res = await fetch("/api/selfroles-setup", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ channelId })
+    });
+    const data = await res.json();
+    if(data.success) alert("Setup-Embed erfolgreich in den Kanal gesendet!");
+    else alert("Fehler: " + data.error);
+}
+
+// -------- Moderation & VC Ban & Settings --------
 async function kickUser(){
-    const user=document.getElementById("kickUser").value;
-    const reason=document.getElementById("kickReason").value;
-    try {
-        await fetch("/api/kick",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({user:user, reason:reason})
-        });
-    } catch(e) {}
+    const user = document.getElementById("kickUserSelect").value;
+    const reason = document.getElementById("kickReason").value;
+    if(!user) { alert("Bitte User auswählen."); return; }
+    await fetch("/api/kick", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({user, reason}) });
     alert("User wurde gekickt.");
 }
 
 async function banUser(){
-    const user=document.getElementById("banUser").value;
-    const reason=document.getElementById("banReason").value;
-    try {
-        await fetch("/api/ban",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({user:user, reason:reason})
-        });
-    } catch(e) {}
+    const user = document.getElementById("banUserSelect").value;
+    const reason = document.getElementById("banReason").value;
+    if(!user) { alert("Bitte User auswählen."); return; }
+    await fetch("/api/ban", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({user, reason}) });
     alert("User wurde gebannt.");
 }
 
-// -------- VC BAN --------
 async function vcBan(){
-    const user=document.getElementById("vcbanUser").value;
-    try {
-        await fetch("/api/vcban",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({user:user, active:true})
-        });
-    } catch(e) {}
+    const user = document.getElementById("vcbanUserSelect").value;
+    if(!user) { alert("Bitte User auswählen."); return; }
+    await fetch("/api/vcban", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({user, active:true}) });
     alert("VC Ban vergeben.");
 }
 
 async function vcUnban(){
-    const user=document.getElementById("vcbanUser").value;
-    try {
-        await fetch("/api/vcban",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({user:user, active:false})
-        });
-    } catch(e) {}
+    const user = document.getElementById("vcbanUserSelect").value;
+    if(!user) { alert("Bitte User auswählen."); return; }
+    await fetch("/api/vcban", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({user, active:false}) });
     alert("VC Ban entfernt.");
 }
 
-// -------- Neustart --------
 async function restartBot(){
     if(!confirm("Bot wirklich neu starten?")) return;
-    try {
-        await fetch("/api/settings",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({action:"restart"})
-        });
-    } catch(e) {}
+    await fetch("/api/restart", { method:"POST" });
     alert("Bot wird neugestartet.");
 }
 </script>
-
 </body>
 </html>
